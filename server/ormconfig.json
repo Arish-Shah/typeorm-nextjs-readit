@@ -1,0 +1,14 @@
+{
+  "type": "postgres",
+  "username": "postgres",
+  "password": "postgres",
+  "database": "reddit",
+  "logging": true,
+  "synchronize": true,
+  "entities": ["dist/entities/*.js"],
+  "migrations": ["dist/migrations/*.js"],
+  "cli": {
+    "entitiesDir": "src/entities",
+    "migrationsDir": "src/migrations"
+  }
+}
