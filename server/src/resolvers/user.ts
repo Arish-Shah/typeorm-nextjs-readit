@@ -1,146 +1,99 @@
-import {
-  Arg,
-  Ctx,
-  Field,
-  Mutation,
-  ObjectType,
-  Query,
-  Resolver,
-} from "type-graphql";
+import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql";
 import bcrypt from "bcryptjs";
-import cookie from "cookie";
 
 import { User } from "../entities/User";
-import { Context } from "./types/context";
 import { registerValidator } from "../util/validators";
 import { RegisterInput } from "./types/register-input";
-import { createToken, readToken } from "../util/token";
-import { FieldError } from "./types/field-error";
-
-@ObjectType()
-class UserResponse {
-  @Field(() => User, { nullable: true })
-  user?: User;
-
-  @Field(() => FieldError, { nullable: true })
-  error?: FieldError;
-}
+import { UserResponse } from "./types/user-response";
+import { Context } from "./types/context";
 
 @Resolver()
 export class UserResolver {
   @Query(() => User, { nullable: true })
-  async me(@Ctx() { req }: Context): Promise<User | null> {
-    const token = req.cookies.token;
-
-    if (!token) {
-      return null;
-    }
-
-    try {
-      const { username } = readToken(token);
-      const user = User.findOne({ where: { username } });
+  async me(@Ctx() { req }: Context) {
+    const userId = (req.session as any).userId;
+    if (userId) {
+      const user = await User.findOne(userId);
       return user;
-    } catch (err) {
-      return null;
     }
+
+    return null;
   }
 
   @Mutation(() => UserResponse)
-  async register(
-    @Arg("data") data: RegisterInput,
-    @Ctx() { res }: Context
-  ): Promise<UserResponse> {
-    const error = registerValidator(data);
-    if (error) {
-      return { error };
-    }
-
+  async register(@Arg("input") input: RegisterInput): Promise<UserResponse> {
     try {
-      const user = await User.create({ ...data }).save();
-
-      const token = createToken(user);
-
-      res.setHeader(
-        "Set-Cookie",
-        cookie.serialize(process.env.COOKIE_NAME, token, {
-          sameSite: "strict",
-          secure: false,
-          maxAge: 1000 * 60 * 60,
-          httpOnly: true,
-          path: "/",
-        })
-      );
-
+      const errors = registerValidator(input);
+      if (errors) {
+        return { errors };
+      }
+      const user = await User.create({ ...input }).save();
       return { user };
     } catch (err) {
       if (err.detail.includes("already exists")) {
+        const detail = err.detail as string;
+        const field = detail.substring(
+          detail.indexOf("(") + 1,
+          detail.indexOf(")")
+        );
+        const message = field + " already exists";
         return {
-          error: {
-            field: err.detail.includes("email") ? "email" : "username",
-            message: "already exists",
-          },
+          errors: [
+            {
+              field,
+              message,
+            },
+          ],
         };
       }
     }
   }
 
-  @Mutation(() => UserResponse, { nullable: true })
+  @Mutation(() => UserResponse)
   async login(
     @Arg("username") username: string,
     @Arg("password") password: string,
-    @Ctx() { res }: Context
+    @Ctx() { req }: Context
   ): Promise<UserResponse> {
     const user = await User.findOne({ where: { username } });
     if (!user) {
       return {
-        error: {
-          field: "username",
-          message: "does not exist",
-        },
+        errors: [
+          {
+            field: "username",
+            message: "username not found",
+          },
+        ],
       };
     }
 
     const valid = await bcrypt.compare(password, user.password);
     if (!valid) {
       return {
-        error: {
-          field: "password",
-          message: "incorrect password",
-        },
+        errors: [
+          {
+            field: "password",
+            message: "incorrect password",
+          },
+        ],
       };
     }
 
-    const token = createToken(user);
-
-    res.setHeader(
-      "Set-Cookie",
-      cookie.serialize(process.env.COOKIE_NAME, token, {
-        sameSite: "strict",
-        secure: false,
-        maxAge: 1000 * 60 * 60,
-        httpOnly: true,
-        path: "/",
-      })
-    );
+    (req.session as any).userId = user.id;
 
     return { user };
   }
 
   @Mutation(() => Boolean)
-  logout(@Ctx() { res, req }: Context) {
-    if (req.cookies.token) {
-      res.setHeader(
-        "Set-Cookie",
-        cookie.serialize(process.env.COOKIE_NAME, "", {
-          sameSite: "strict",
-          secure: false,
-          maxAge: -1,
-          httpOnly: true,
-          path: "/",
-        })
-      );
-      return true;
-    }
-    return false;
+  logout(@Ctx() { req, res }: Context): Promise<boolean> {
+    return new Promise((resolve) => {
+      return req.session.destroy((err) => {
+        if (err) {
+          return resolve(false);
+        }
+        res.clearCookie(process.env.COOKIE_NAME);
+        return resolve(true);
+      });
+    });
   }
 }

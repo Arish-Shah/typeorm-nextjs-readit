@@ -1,14 +1,18 @@
 {
   "type": "postgres",
+  "host": "localhost",
+  "port": 5432,
   "username": "postgres",
   "password": "postgres",
-  "database": "reddit",
-  "logging": true,
+  "database": "readit",
   "synchronize": true,
-  "entities": ["dist/entities/*.js"],
-  "migrations": ["dist/migrations/*.js"],
+  "logging": false,
+  "entities": ["src/entities/**/*.ts"],
+  "migrations": ["src/migrations/**/*.ts"],
+  "subscribers": ["src/subscribers/**/*.ts"],
   "cli": {
     "entitiesDir": "src/entities",
-    "migrationsDir": "src/migrations"
+    "migrationsDir": "src/migrations",
+    "subscribersDir": "src/subscribers"
   }
 }

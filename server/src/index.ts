@@ -1,46 +1,57 @@
 import "reflect-metadata";
-import { createConnection } from "typeorm";
 import express from "express";
 import { ApolloServer } from "apollo-server-express";
+import { createConnection } from "typeorm";
+import dotev from "dotenv";
 import { buildSchema } from "type-graphql";
-import dotenv from "dotenv";
-import cookieParser from "cookie-parser";
-import cors from "cors";
+import redis from "redis";
+import session from "express-session";
+import connectRedis from "connect-redis";
 
-import { UserResolver } from "./resolvers/user";
-import { PostResolver } from "./resolvers/posts";
-import { SubResolver } from "./resolvers/subs";
-import { CommentResolver } from "./resolvers/comments";
+import { __prod__ } from "./constants";
 
-dotenv.config();
+dotev.config();
+
+const port = process.env.PORT;
 
 const main = async () => {
-  const connection = await createConnection();
+  await createConnection();
 
   const server = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [UserResolver, PostResolver, SubResolver, CommentResolver],
+      resolvers: [__dirname + "/resolvers/*.ts"],
     }),
-    context: ({ req, res }) => ({ req, res, connection }),
+    context: ({ req, res }) => ({ req, res }),
   });
+
+  const RedisStore = connectRedis(session);
+  const client = redis.createClient();
 
   const app = express();
 
   app.use(
-    cors({
-      origin: process.env.ORIGIN,
-      credentials: true,
-      optionsSuccessStatus: 200,
+    session({
+      name: process.env.COOKIE_NAME,
+      store: new RedisStore({
+        client,
+        disableTouch: true,
+      }),
+      secret: process.env.SESSION_SECRET,
+      resave: false,
+      saveUninitialized: false,
+      cookie: {
+        maxAge: 1000 * 60 * 60 * 24 * 365 * 10, // 10 years
+        httpOnly: true,
+        sameSite: "lax",
+        secure: __prod__,
+      },
     })
   );
 
-  app.use(cookieParser());
+  server.applyMiddleware({ app });
 
-  server.applyMiddleware({ app, cors: false });
-
-  const port = process.env.PORT;
   app.listen(port, () => {
-    console.log(`🚀 Server started on http://localhost:${port}/graphql`);
+    console.log(`🚀 Server started on http://localhost:4000/graphql`);
   });
 };
 
