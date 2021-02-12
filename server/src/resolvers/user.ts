@@ -1,33 +1,38 @@
-import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql";
 import bcrypt from "bcryptjs";
+import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql";
 
 import { User } from "../entities/User";
 import { registerValidator } from "../util/validators";
+import { Context } from "./types/context";
 import { RegisterInput } from "./types/register-input";
 import { UserResponse } from "./types/user-response";
-import { Context } from "./types/context";
 
-@Resolver()
+@Resolver(User)
 export class UserResolver {
   @Query(() => User, { nullable: true })
   async me(@Ctx() { req }: Context) {
-    const userId = (req.session as any).userId;
+    const userId = req.session.userId;
     if (userId) {
       const user = await User.findOne(userId);
       return user;
     }
-
     return null;
   }
 
   @Mutation(() => UserResponse)
-  async register(@Arg("input") input: RegisterInput): Promise<UserResponse> {
+  async register(
+    @Arg("input") input: RegisterInput,
+    @Ctx() { req }: Context
+  ): Promise<UserResponse> {
     try {
       const errors = registerValidator(input);
       if (errors) {
         return { errors };
       }
       const user = await User.create({ ...input }).save();
+
+      req.session.userId = user.id;
+
       return { user };
     } catch (err) {
       if (err.detail.includes("already exists")) {
