@@ -1,57 +1,39 @@
+import {
+  Arg,
+  Ctx,
+  Field,
+  Mutation,
+  ObjectType,
+  Query,
+  Resolver,
+} from "type-graphql";
 import bcrypt from "bcryptjs";
-import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql";
 
 import { User } from "../entities/User";
-import { registerValidator } from "../util/validators";
-import { Context } from "./types/context";
+import { validateRegister } from "../util/validators";
+import { FieldError } from "./types/field-error";
 import { RegisterInput } from "./types/register-input";
-import { UserResponse } from "./types/user-response";
+import { Context } from "./types/context";
+
+@ObjectType()
+class UserResponse {
+  @Field(() => User, { nullable: true })
+  user?: User;
+
+  @Field(() => [FieldError], { nullable: true })
+  errors?: FieldError[];
+}
 
 @Resolver(User)
 export class UserResolver {
   @Query(() => User, { nullable: true })
-  async me(@Ctx() { req }: Context) {
+  me(@Ctx() { req }: Context): Promise<User | null> {
+    // @ts-ignore
     const userId = req.session.userId;
     if (userId) {
-      const user = await User.findOne(userId);
-      return user;
+      return User.findOne(userId);
     }
     return null;
-  }
-
-  @Mutation(() => UserResponse)
-  async register(
-    @Arg("input") input: RegisterInput,
-    @Ctx() { req }: Context
-  ): Promise<UserResponse> {
-    try {
-      const errors = registerValidator(input);
-      if (errors) {
-        return { errors };
-      }
-      const user = await User.create({ ...input }).save();
-
-      req.session.userId = user.id;
-
-      return { user };
-    } catch (err) {
-      if (err.detail.includes("already exists")) {
-        const detail = err.detail as string;
-        const field = detail.substring(
-          detail.indexOf("(") + 1,
-          detail.indexOf(")")
-        );
-        const message = field + " already exists";
-        return {
-          errors: [
-            {
-              field,
-              message,
-            },
-          ],
-        };
-      }
-    }
   }
 
   @Mutation(() => UserResponse)
@@ -66,27 +48,67 @@ export class UserResolver {
         errors: [
           {
             field: "username",
-            message: "username not found",
+            message: "does not exist",
           },
         ],
       };
     }
 
     const valid = await bcrypt.compare(password, user.password);
+
     if (!valid) {
       return {
         errors: [
           {
             field: "password",
-            message: "incorrect password",
+            message: "incorrect",
           },
         ],
       };
     }
+    // @ts-ignore
+    req.session.userId = user.id;
 
-    (req.session as any).userId = user.id;
+    return {
+      user,
+    };
+  }
 
-    return { user };
+  @Mutation(() => UserResponse)
+  async register(
+    @Arg("input") input: RegisterInput,
+    @Ctx() { req }: Context
+  ): Promise<UserResponse> {
+    const errors = validateRegister(input);
+    if (errors) {
+      return {
+        errors,
+      };
+    }
+
+    try {
+      const user = await User.create({ ...input }).save();
+      // @ts-ignore
+      req.session.userId = user.id;
+
+      return {
+        user,
+      };
+    } catch (err) {
+      const detail = err.detail as string;
+      const field = detail.substring(
+        detail.indexOf("(") + 1,
+        detail.indexOf(")")
+      );
+      return {
+        errors: [
+          {
+            field,
+            message: "already exists",
+          },
+        ],
+      };
+    }
   }
 
   @Mutation(() => Boolean)

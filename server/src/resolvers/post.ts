@@ -1,37 +1,36 @@
 import {
   Arg,
   Ctx,
+  Field,
+  InputType,
   Mutation,
   Query,
   Resolver,
   UseMiddleware,
 } from "type-graphql";
-import { getConnection } from "typeorm";
-
 import { Context } from "./types/context";
+
 import { Post } from "../entities/Post";
-import { PostInput } from "./types/post-input";
 import { isAuth } from "../middleware/isAuth";
+
+@InputType()
+class PostInput {
+  @Field()
+  title: string;
+
+  @Field()
+  body: string;
+}
 
 @Resolver(Post)
 export class PostResolver {
   @Query(() => [Post])
-  async posts(
-    @Arg("limit") limit: number,
-    @Arg("cursor", { nullable: true }) cursor: string | null
-  ): Promise<Post[]> {
-    return (
-      getConnection()
-        .getRepository(Post)
-        .createQueryBuilder("p")
-        // .where("user.id = :id", { id: 1 })
-        .orderBy('"createdAt"')
-        .getMany()
-    );
+  posts(): Promise<Post[]> {
+    return Post.find();
   }
 
   @Query(() => Post, { nullable: true })
-  async post(@Arg("id") id: number): Promise<Post | null> {
+  async post(@Arg("id") id: string): Promise<Post | null> {
     try {
       const post = await Post.findOne(id);
       return post;
@@ -42,13 +41,13 @@ export class PostResolver {
 
   @Mutation(() => Post)
   @UseMiddleware(isAuth)
-  createPost(
+  async createPost(
     @Arg("input") input: PostInput,
     @Ctx() { req }: Context
   ): Promise<Post> {
-    return Post.create({
-      ...input,
-      creatorId: req.session.userId,
-    }).save();
+    // @ts-ignore
+    const creatorId = req.session.userId;
+    const post = await Post.create({ ...input, creatorId }).save();
+    return post;
   }
 }
