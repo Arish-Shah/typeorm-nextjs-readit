@@ -1,1 +1,1 @@
-# typeorm-nextjs-readit
+# typeorm-react-graphql-readit

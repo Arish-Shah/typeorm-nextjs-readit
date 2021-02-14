@@ -4,34 +4,34 @@ import {
   FormErrorMessage,
   FormLabel,
   Input,
+  Textarea,
 } from "@chakra-ui/react";
 
 interface InputFieldProps {
   label: string;
   type: "text" | "password" | "email";
   placeholder: string;
+  error?: string | undefined;
   value: string;
-  id: string;
-  onChange: (e: string) => void;
-  required?: boolean;
-  error?: string;
+  onChange: (val: any) => void;
+  textarea?: boolean;
 }
 
 const InputField = (props: InputFieldProps) => {
+  let InputOrTextarea: any = Input;
+
+  if (props.textarea) {
+    InputOrTextarea = Textarea;
+  }
+
   return (
-    <FormControl
-      my="3"
-      isRequired={props.required || false}
-      isInvalid={!!props.error}
-    >
-      <FormLabel htmlFor={props.id}>{props.label}</FormLabel>
-      <Input
+    <FormControl isInvalid={!!props.error} my="3">
+      <FormLabel>{props.label}</FormLabel>
+      <InputOrTextarea
         type={props.type}
         placeholder={props.placeholder}
         value={props.value}
-        id={props.id}
-        onChange={(e) => props.onChange(e.target.value)}
-        required={props.required}
+        onChange={(e: any) => props.onChange(e.target.value)}
       />
       <FormErrorMessage>
         <FormErrorIcon></FormErrorIcon>

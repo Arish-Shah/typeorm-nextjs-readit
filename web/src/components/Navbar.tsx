@@ -1,25 +1,16 @@
-import {
-  Box,
-  Flex,
-  Heading,
-  Spacer,
-  Button,
-  Link,
-  Text,
-} from "@chakra-ui/react";
-import NextLink from "next/link";
-import { Fragment } from "react";
+import { Box, Button, Flex, Heading, Text } from "@chakra-ui/react";
+import { Link } from "react-router-dom";
 
 import {
+  useMeQuery,
+  useLogoutMutation,
   MeDocument,
   MeQuery,
-  useLogoutMutation,
-  useMeQuery,
 } from "../generated/graphql";
 
 const Navbar = () => {
-  const { data, loading: meLoading } = useMeQuery();
-  const [logout, { loading: logoutLoading }] = useLogoutMutation();
+  const { data, loading } = useMeQuery();
+  const [logout] = useLogoutMutation();
 
   const handleLogout = () => {
     logout({
@@ -28,6 +19,7 @@ const Navbar = () => {
           cache.writeQuery<MeQuery>({
             query: MeDocument,
             data: {
+              __typename: "Query",
               me: null,
             },
           });
@@ -36,50 +28,56 @@ const Navbar = () => {
     });
   };
 
-  let content;
+  let body;
 
-  if (meLoading) {
-    content = null;
-  } else if (data?.me?.id) {
-    content = (
-      <Fragment>
-        <Flex alignItems="center">
-          <Text>{data.me.username}</Text>
-          <Button ml="5" onClick={handleLogout} isLoading={logoutLoading}>
-            logout
-          </Button>
-        </Flex>
-      </Fragment>
+  if (loading) {
+    // do nothing
+  } else if (data?.me) {
+    body = (
+      <Flex alignItems="center">
+        <Text>{data.me.username}</Text>
+        <Button
+          variant="link"
+          ml="3"
+          colorScheme="blue"
+          size="sm"
+          onClick={handleLogout}
+        >
+          logout
+        </Button>
+      </Flex>
     );
   } else {
-    content = (
-      <Fragment>
-        <NextLink href="/register">
+    body = (
+      <Box>
+        <Link to="/register">
           <Button mr="2" colorScheme="teal">
             register
           </Button>
-        </NextLink>
-        <NextLink href="/login">
+        </Link>
+        <Link to="/login">
           <Button>login</Button>
-        </NextLink>
-      </Fragment>
+        </Link>
+      </Box>
     );
   }
 
   return (
-    <Box boxShadow="sm">
-      <Flex p="4" alignItems="center" w="" mx="auto">
-        <Box>
-          <Heading size="md">
-            <NextLink href="/">
-              <Link textDecoration="plum">Readit</Link>
-            </NextLink>
-          </Heading>
-        </Box>
-        <Spacer />
-        <Box>{content}</Box>
-      </Flex>
-    </Box>
+    <Flex
+      alignItems="center"
+      justifyContent="space-between"
+      px="4"
+      py="2"
+      borderBottom="2px"
+      borderColor="gray.700"
+    >
+      <Box>
+        <Link to="/">
+          <Heading>Readit</Heading>
+        </Link>
+      </Box>
+      {body}
+    </Flex>
   );
 };
 
