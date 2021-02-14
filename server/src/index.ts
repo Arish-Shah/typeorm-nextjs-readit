@@ -7,6 +7,7 @@ import redis from "redis";
 import connectRedis from "connect-redis";
 import session from "express-session";
 import dotenv from "dotenv";
+import cors from "cors";
 
 import { __prod__ } from "./constants";
 import { UserResolver } from "./resolvers/user";
@@ -31,6 +32,13 @@ const main = async () => {
 
   const app = express();
 
+  const corsOptions: cors.CorsOptions = {
+    origin: process.env.CLIENT_URL,
+    credentials: true,
+  };
+
+  app.use(cors(corsOptions));
+
   app.use(
     session({
       store: new RedisStore({
@@ -44,14 +52,14 @@ const main = async () => {
       cookie: {
         httpOnly: true,
         path: "/",
-        sameSite: "lax",
+        sameSite: "strict",
         secure: __prod__,
         maxAge: 1000 * 60 * 60 * 24 * 365 * 7,
       },
     })
   );
 
-  server.applyMiddleware({ app });
+  server.applyMiddleware({ app, cors: false });
   app.listen(port, () => {
     console.log(`🚀 Server started on http://localhost:${port}/graphql`);
   });

@@ -1,10 +1,10 @@
 import { FormEventHandler, Fragment, useState } from "react";
-import { Box, Button } from "@chakra-ui/react";
+import { Box, Button, Heading } from "@chakra-ui/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 
 import InputField from "../components/InputField";
-import { useRegisterMutation } from "../generated/graphql";
+import { MeDocument, MeQuery, useRegisterMutation } from "../generated/graphql";
 import { toErrorMap } from "../util/toErrorMap";
 
 const Register = () => {
@@ -24,6 +24,17 @@ const Register = () => {
       variables: {
         input: { email, username, password },
       },
+      update: (cache, { data }) => {
+        if (data?.register.user) {
+          cache.writeQuery<MeQuery>({
+            query: MeDocument,
+            data: {
+              __typename: "Query",
+              me: data.register.user,
+            },
+          });
+        }
+      },
     });
 
     if (response.data?.register.user?.id) {
@@ -40,7 +51,10 @@ const Register = () => {
       <Head>
         <title>Register</title>
       </Head>
-      <Box mx="auto" w="md" mt="10">
+      <Box mx="auto" w="md" mt="6">
+        <Heading size="md" mb="5">
+          Register
+        </Heading>
         <form onSubmit={handleSubmit}>
           <InputField
             type="email"
