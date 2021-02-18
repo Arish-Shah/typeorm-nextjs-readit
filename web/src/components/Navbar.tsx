@@ -36,6 +36,9 @@ const Navbar = () => {
     body = (
       <Flex alignItems="center">
         <Text>{data.me.username}</Text>
+        <Button as={Link} ml="4" size="sm" to="/create-post">
+          Create Post
+        </Button>
         <Button
           variant="link"
           ml="3"

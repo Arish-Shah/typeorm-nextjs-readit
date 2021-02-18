@@ -1,5 +1,6 @@
 import { FormEventHandler, useState } from "react";
 import { Box, Button } from "@chakra-ui/react";
+import { useHistory } from "react-router-dom";
 
 import InputField from "../components/InputField";
 import { MeDocument, MeQuery, useLoginMutation } from "../generated/graphql";
@@ -7,6 +8,8 @@ import { toErrorMap } from "../util/toErrorMap";
 
 const Login = () => {
   document.title = "Login";
+
+  const history = useHistory();
 
   const [login, { loading }] = useLoginMutation();
 
@@ -34,6 +37,10 @@ const Login = () => {
 
     if (response.data?.login.errors) {
       setErrors(toErrorMap(response.data.login.errors));
+    }
+
+    if (response.data?.login.user) {
+      history.push("/");
     }
   };
 

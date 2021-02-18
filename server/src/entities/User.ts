@@ -11,6 +11,7 @@ import {
 } from "typeorm";
 import bcrypt from "bcryptjs";
 import { Post } from "./Post";
+import { Upvote } from "./Upvote";
 
 @ObjectType()
 @Entity("users")
@@ -32,6 +33,9 @@ export class User extends BaseEntity {
 
   @OneToMany(() => Post, (post) => post.creator)
   posts: Post[];
+
+  @OneToMany(() => Upvote, (upvote) => upvote.userId)
+  upvotes: Upvote[];
 
   @Field()
   @CreateDateColumn()

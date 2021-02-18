@@ -2,10 +2,12 @@ import {
   Arg,
   Ctx,
   Field,
+  FieldResolver,
   Mutation,
   ObjectType,
   Query,
   Resolver,
+  Root,
 } from "type-graphql";
 import bcrypt from "bcryptjs";
 
@@ -26,6 +28,16 @@ class UserResponse {
 
 @Resolver(User)
 export class UserResolver {
+  @FieldResolver(() => String)
+  email(@Root() parent: User, @Ctx() { req }: Context) {
+    // @ts-ignore
+    if (req.session.userId === parent.id) {
+      return parent.email;
+    }
+    // current user wants to see someone else's email
+    return "";
+  }
+
   @Query(() => User, { nullable: true })
   me(@Ctx() { req }: Context): Promise<User | null> {
     // @ts-ignore

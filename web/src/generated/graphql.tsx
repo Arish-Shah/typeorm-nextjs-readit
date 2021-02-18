@@ -18,8 +18,14 @@ export type Scalars = {
 export type Query = {
   __typename?: 'Query';
   me?: Maybe<User>;
-  posts: Array<Post>;
+  posts: PaginatedPosts;
   post?: Maybe<Post>;
+};
+
+
+export type QueryPostsArgs = {
+  cursor?: Maybe<Scalars['String']>;
+  limit: Scalars['Int'];
 };
 
 
@@ -37,6 +43,12 @@ export type User = {
 };
 
 
+export type PaginatedPosts = {
+  __typename?: 'PaginatedPosts';
+  posts: Array<Post>;
+  hasMore: Scalars['Boolean'];
+};
+
 export type Post = {
   __typename?: 'Post';
   id: Scalars['String'];
@@ -47,6 +59,7 @@ export type Post = {
   creator: User;
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
+  snippet: Scalars['String'];
 };
 
 export type Mutation = {
@@ -54,7 +67,8 @@ export type Mutation = {
   login: UserResponse;
   register: UserResponse;
   logout: Scalars['Boolean'];
-  createPost: Post;
+  vote: Scalars['Boolean'];
+  createPost: PostResponse;
 };
 
 
@@ -66,6 +80,12 @@ export type MutationLoginArgs = {
 
 export type MutationRegisterArgs = {
   input: RegisterInput;
+};
+
+
+export type MutationVoteArgs = {
+  value: Scalars['Float'];
+  postId: Scalars['String'];
 };
 
 
@@ -91,6 +111,12 @@ export type RegisterInput = {
   password: Scalars['String'];
 };
 
+export type PostResponse = {
+  __typename?: 'PostResponse';
+  post?: Maybe<Post>;
+  errors?: Maybe<Array<FieldError>>;
+};
+
 export type PostInput = {
   title: Scalars['String'];
   body: Scalars['String'];
@@ -114,8 +140,14 @@ export type CreatePostMutationVariables = Exact<{
 export type CreatePostMutation = (
   { __typename?: 'Mutation' }
   & { createPost: (
-    { __typename?: 'Post' }
-    & Pick<Post, 'id' | 'title' | 'body' | 'creatorId' | 'points' | 'createdAt' | 'updatedAt'>
+    { __typename?: 'PostResponse' }
+    & { post?: Maybe<(
+      { __typename?: 'Post' }
+      & Pick<Post, 'id' | 'title' | 'snippet' | 'creatorId' | 'points' | 'createdAt' | 'updatedAt'>
+    )>, errors?: Maybe<Array<(
+      { __typename?: 'FieldError' }
+      & RegularErrorFragment
+    )>> }
   ) }
 );
 
@@ -177,15 +209,26 @@ export type MeQuery = (
   )> }
 );
 
-export type PostsQueryVariables = Exact<{ [key: string]: never; }>;
+export type PostsQueryVariables = Exact<{
+  limit: Scalars['Int'];
+  cursor?: Maybe<Scalars['String']>;
+}>;
 
 
 export type PostsQuery = (
   { __typename?: 'Query' }
-  & { posts: Array<(
-    { __typename?: 'Post' }
-    & Pick<Post, 'id' | 'title' | 'body' | 'createdAt'>
-  )> }
+  & { posts: (
+    { __typename?: 'PaginatedPosts' }
+    & Pick<PaginatedPosts, 'hasMore'>
+    & { posts: Array<(
+      { __typename?: 'Post' }
+      & Pick<Post, 'id' | 'title' | 'snippet' | 'createdAt' | 'updatedAt'>
+      & { creator: (
+        { __typename?: 'User' }
+        & Pick<User, 'id' | 'username'>
+      ) }
+    )> }
+  ) }
 );
 
 export const RegularErrorFragmentDoc = gql`
@@ -203,16 +246,21 @@ export const RegularUserFragmentDoc = gql`
 export const CreatePostDocument = gql`
     mutation CreatePost($input: PostInput!) {
   createPost(input: $input) {
-    id
-    title
-    body
-    creatorId
-    points
-    createdAt
-    updatedAt
+    post {
+      id
+      title
+      snippet
+      creatorId
+      points
+      createdAt
+      updatedAt
+    }
+    errors {
+      ...RegularError
+    }
   }
 }
-    `;
+    ${RegularErrorFragmentDoc}`;
 export type CreatePostMutationFn = Apollo.MutationFunction<CreatePostMutation, CreatePostMutationVariables>;
 
 /**
@@ -377,12 +425,20 @@ export type MeQueryHookResult = ReturnType<typeof useMeQuery>;
 export type MeLazyQueryHookResult = ReturnType<typeof useMeLazyQuery>;
 export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
 export const PostsDocument = gql`
-    query Posts {
-  posts {
-    id
-    title
-    body
-    createdAt
+    query Posts($limit: Int!, $cursor: String) {
+  posts(limit: $limit, cursor: $cursor) {
+    posts {
+      id
+      title
+      snippet
+      createdAt
+      updatedAt
+      creator {
+        id
+        username
+      }
+    }
+    hasMore
   }
 }
     `;
@@ -399,10 +455,12 @@ export const PostsDocument = gql`
  * @example
  * const { data, loading, error } = usePostsQuery({
  *   variables: {
+ *      limit: // value for 'limit'
+ *      cursor: // value for 'cursor'
  *   },
  * });
  */
-export function usePostsQuery(baseOptions?: Apollo.QueryHookOptions<PostsQuery, PostsQueryVariables>) {
+export function usePostsQuery(baseOptions: Apollo.QueryHookOptions<PostsQuery, PostsQueryVariables>) {
         return Apollo.useQuery<PostsQuery, PostsQueryVariables>(PostsDocument, baseOptions);
       }
 export function usePostsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PostsQuery, PostsQueryVariables>) {

@@ -4,6 +4,7 @@ import { useHistory } from "react-router-dom";
 
 import InputField from "../components/InputField";
 import { useCreatePostMutation } from "../generated/graphql";
+import { toErrorMap } from "../util/toErrorMap";
 
 const CreatePost = () => {
   document.title = "Login";
@@ -11,18 +12,35 @@ const CreatePost = () => {
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
 
+  const [errors, setErrors] = useState<Record<string, string> | null>(null);
+
   const [createPost] = useCreatePostMutation();
 
   const history = useHistory();
 
   const handleSubmit: FormEventHandler = async (event) => {
     event.preventDefault();
-    await createPost({
+    const response = await createPost({
       variables: {
         input: { title, body },
       },
+      update: (cache) => {
+        cache.modify({
+          fields: {
+            posts(_, { INVALIDATE }) {
+              return INVALIDATE;
+            },
+          },
+        });
+      },
     });
-    history.push("/");
+
+    if (response.data?.createPost.errors) {
+      setErrors(toErrorMap(response.data.createPost.errors));
+    }
+    if (response.data?.createPost.post) {
+      history.push("/");
+    }
   };
 
   return (
@@ -34,6 +52,7 @@ const CreatePost = () => {
           placeholder="title"
           value={title}
           onChange={setTitle}
+          error={errors?.title}
         />
         <InputField
           type="text"
@@ -42,6 +61,7 @@ const CreatePost = () => {
           value={body}
           onChange={setBody}
           textarea
+          error={errors?.body}
         />
         <Button colorScheme="teal" type="submit">
           add

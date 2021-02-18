@@ -1,5 +1,6 @@
 import { FormEventHandler, useState } from "react";
 import { Box, Button } from "@chakra-ui/react";
+import { useHistory } from "react-router-dom";
 
 import InputField from "../components/InputField";
 import { MeDocument, MeQuery, useRegisterMutation } from "../generated/graphql";
@@ -7,6 +8,8 @@ import { toErrorMap } from "../util/toErrorMap";
 
 const Register = () => {
   document.title = "Register";
+
+  const history = useHistory();
 
   const [register, { loading }] = useRegisterMutation();
 
@@ -37,6 +40,10 @@ const Register = () => {
 
     if (response.data?.register.errors) {
       setErrors(toErrorMap(response.data.register.errors));
+    }
+
+    if (response.data?.register.user) {
+      history.push("/");
     }
   };
 
