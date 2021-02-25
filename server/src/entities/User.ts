@@ -6,15 +6,17 @@ import {
   BaseEntity,
   CreateDateColumn,
   BeforeInsert,
+  OneToMany,
 } from "typeorm";
 import bcrypt from "bcryptjs";
+import { Post } from "./Post";
 
 @ObjectType()
 @Entity("users")
 export class User extends BaseEntity {
   @Field(() => ID)
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn("uuid")
+  id: string;
 
   @Field()
   @Column({ unique: true })
@@ -23,6 +25,10 @@ export class User extends BaseEntity {
   @Field()
   @Column({ unique: true })
   username: string;
+
+  @Field(() => [User])
+  @OneToMany(() => Post, (post) => post.creator)
+  posts: Post[];
 
   @Column()
   password: string;

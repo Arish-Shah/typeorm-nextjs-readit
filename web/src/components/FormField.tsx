@@ -4,6 +4,7 @@ import {
   FormErrorMessage,
   FormLabel,
   Input,
+  Textarea,
 } from "@chakra-ui/react";
 
 interface FormFieldProps {
@@ -14,18 +15,23 @@ interface FormFieldProps {
   placeholder?: string;
   onChange: (e: any) => void;
   error?: string;
+  isTextarea?: boolean;
 }
 
 const FormField = (props: FormFieldProps) => {
+  const Field: any = props.isTextarea ? Textarea : Input;
+
   return (
     <FormControl mb="3" isInvalid={!!props.error}>
       <FormLabel htmlFor={props.id}>{props.label}</FormLabel>
-      <Input
+      <Field
         type={props.type}
         id={props.id}
         placeholder={props.placeholder || props.label.toLowerCase()}
         value={props.value}
-        onChange={(e) => props.onChange(e.target.value)}
+        onChange={(
+          e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+        ) => props.onChange(e.target.value)}
         required
       />
       <FormErrorMessage>

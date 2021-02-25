@@ -11,3 +11,12 @@ export class RegisterInput {
   @Field()
   password: string;
 }
+
+@InputType()
+export class PostInput {
+  @Field()
+  title: string;
+
+  @Field()
+  body: string;
+}

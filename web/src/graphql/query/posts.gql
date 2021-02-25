@@ -1,0 +1,12 @@
+query Posts {
+  posts {
+    id
+    title
+    snippet
+    creatorId
+    creator {
+      username
+    }
+    createdAt
+  }
+}

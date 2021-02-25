@@ -9,17 +9,45 @@ The javascript `Date` as string. Type represents date and time as the ISO Date s
 scalar DateTime
 
 type FieldError {
+  body: String
   email: String
   password: String
+  title: String
   username: String
 }
 
 type Mutation {
+  createPost(input: PostInput!): PostResponse!
+  deletePost(postID: ID!): Boolean!
+  login(password: String!, username: String!): UserResponse!
+  logout: Boolean!
   register(input: RegisterInput!): UserResponse!
 }
 
+type Post {
+  body: String!
+  createdAt: DateTime!
+  creator: User!
+  creatorId: ID!
+  id: ID!
+  snippet: String!
+  title: String!
+  updatedAt: DateTime!
+}
+
+input PostInput {
+  body: String!
+  title: String!
+}
+
+type PostResponse {
+  errors: FieldError
+  post: Post
+}
+
 type Query {
-  hello: String!
+  me: User
+  posts: [Post!]!
 }
 
 input RegisterInput {
@@ -32,6 +60,7 @@ type User {
   createdAt: DateTime!
   email: String!
   id: ID!
+  posts: [User!]!
   username: String!
 }
 

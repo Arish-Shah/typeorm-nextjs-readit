@@ -1,59 +1,46 @@
 import { useState, FormEventHandler } from "react";
-import { Box, Button } from "@chakra-ui/react";
+import { Button } from "@chakra-ui/react";
 
 import FormField from "../components/FormField";
-import { MeDocument, MeQuery, useRegisterMutation } from "../generated/graphql";
+import { MeDocument, MeQuery, useLoginMutation } from "../generated/graphql";
 
-const Register = () => {
-  const [email, setEmail] = useState("");
+const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({
-    email: "",
     username: "",
     password: "",
   });
 
-  const [register, { loading }] = useRegisterMutation();
+  const [login, { loading }] = useLoginMutation();
 
   const handleSubmit: FormEventHandler = async (event) => {
     event.preventDefault();
-    const response = await register({
-      variables: {
-        input: { email, username, password },
-      },
+    const response = await login({
+      variables: { username, password },
       update(cache, { data }) {
-        if (data?.register.user) {
-          // register is successful, update cache
+        if (data?.login.user) {
+          // login is successful, update cache
           cache.writeQuery<MeQuery>({
             query: MeDocument,
             data: {
-              me: data.register.user,
+              me: data.login.user,
               __typename: "Query",
             },
           });
         }
       },
     });
-    if (response.data?.register.errors) {
+    if (response.data?.login.errors) {
       setErrors({
-        email: response.data.register.errors.email || "",
-        username: response.data.register.errors.username || "",
-        password: response.data.register.errors.password || "",
+        username: response.data.login.errors.username || "",
+        password: response.data.login.errors.password || "",
       });
     }
   };
 
   return (
-    <Box as="form" onSubmit={handleSubmit} maxWidth="xl" mx="auto">
-      <FormField
-        id="email"
-        label="Email"
-        type="email"
-        value={email}
-        onChange={setEmail}
-        error={errors.email}
-      />
+    <form onSubmit={handleSubmit}>
       <FormField
         id="username"
         label="Username"
@@ -71,10 +58,10 @@ const Register = () => {
         error={errors.password}
       />
       <Button colorScheme="teal" type="submit" isLoading={loading}>
-        register
+        login
       </Button>
-    </Box>
+    </form>
   );
 };
 
-export default Register;
+export default Login;

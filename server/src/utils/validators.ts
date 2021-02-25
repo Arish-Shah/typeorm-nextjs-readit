@@ -1,7 +1,7 @@
 import { isAlphanumeric, isEmail, length } from "class-validator";
 
 import { FieldError } from "../resolvers/types/field-error";
-import { RegisterInput } from "../resolvers/types/input";
+import { PostInput, RegisterInput } from "../resolvers/types/input";
 
 export const registerValidator = (input: RegisterInput): FieldError | null => {
   const errors: FieldError = {};
@@ -18,6 +18,20 @@ export const registerValidator = (input: RegisterInput): FieldError | null => {
 
   if (!length(input.password, 4)) {
     errors.password = "minimum 8 characters";
+  }
+
+  return Object.keys(errors).length ? errors : null;
+};
+
+export const postValidator = (input: PostInput): FieldError | null => {
+  const errors: FieldError = {};
+
+  if (!length(input.title, 1)) {
+    errors.title = "cannot be empty";
+  }
+
+  if (!length(input.body, 1)) {
+    errors.body = "cannot be empty";
   }
 
   return Object.keys(errors).length ? errors : null;
