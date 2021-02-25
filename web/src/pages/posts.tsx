@@ -1,15 +1,15 @@
 import { Box, Stack, Text, Link } from "@chakra-ui/react";
 import { Link as ReactLink } from "react-router-dom";
 
-import PostSkeleton from "../components/PostSkeleton";
-import Post from "../components/Post";
+import Post from "../components/PostItem";
+import { PostsSkeleton } from "../components/Skeleton";
 import { usePostsQuery } from "../generated/graphql";
 
 const Posts = () => {
   const { data, loading } = usePostsQuery();
 
   if (loading) {
-    return <PostSkeleton />;
+    return PostsSkeleton;
   }
 
   if (!loading && data?.posts.length) {

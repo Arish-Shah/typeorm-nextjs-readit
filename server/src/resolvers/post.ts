@@ -32,8 +32,13 @@ class PostResponse {
 @Resolver(Post)
 export class PostResolver {
   @Query(() => [Post])
-  async posts() {
+  posts() {
     return Post.find({ order: { createdAt: "DESC" } });
+  }
+
+  @Query(() => Post, { nullable: true })
+  post(@Arg("postID", () => ID) postID: string) {
+    return Post.findOne(postID);
   }
 
   @FieldResolver(() => String)

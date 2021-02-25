@@ -6,6 +6,7 @@ import Register from "./pages/register";
 import Login from "./pages/login";
 import CreatePost from "./pages/create-post";
 import EditPost from "./pages/edit-post";
+import Post from "./pages/post";
 
 import Navbar from "./components/Navbar";
 
@@ -16,6 +17,7 @@ const App = () => {
       <Route path="/register" component={Register} exact />
       <Route path="/login" component={Login} exact />
       <Route path="/create-post" component={CreatePost} exact />
+      <Route path="/post/:id" component={Post} exact />
       <Route path="/posts/edit/:id" component={EditPost} exact />
       <Redirect to="/posts" />
     </Switch>
