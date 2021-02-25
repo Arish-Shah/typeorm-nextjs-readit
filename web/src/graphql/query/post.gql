@@ -2,7 +2,7 @@ query Post($postID: ID!) {
   post(postID: $postID) {
     id
     title
-    snippet
+    body
     creatorId
     creator {
       id

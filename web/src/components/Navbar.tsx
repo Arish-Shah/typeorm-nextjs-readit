@@ -51,6 +51,7 @@ const Navbar = () => {
               as={Button}
               isActive={isOpen}
               rightIcon={<ChevronDownIcon />}
+              colorScheme="teal"
             >
               {data.me!.username}
             </MenuButton>

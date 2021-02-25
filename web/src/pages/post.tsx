@@ -1,4 +1,4 @@
-import { Heading } from "@chakra-ui/react";
+import { Flex, Heading, Text } from "@chakra-ui/react";
 import { Fragment } from "react";
 import { useParams } from "react-router-dom";
 import Actions from "../components/Actions";
@@ -23,14 +23,25 @@ const Post = () => {
     return (
       <Fragment>
         <Heading>{data.post.title}</Heading>
+        <Flex justifyContent="space-between" alignItems="center" mt="3">
+          <Text as="blockquote">by {data.post.creator.username}</Text>
+          <Text>
+            Posted at {new Date(data.post.createdAt).toLocaleString()}
+          </Text>
+        </Flex>
         {data.post.creatorId === meData?.me?.id && (
           <Actions postID={data.post.id} />
         )}
+        <Text mt="6">{data.post.body}</Text>
       </Fragment>
     );
   }
 
-  return null;
+  return (
+    <Heading size="md" textAlign="center">
+      Post Not Found
+    </Heading>
+  );
 };
 
 export default Post;

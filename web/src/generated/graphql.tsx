@@ -207,7 +207,7 @@ export type PostQuery = (
   { __typename?: 'Query' }
   & { post?: Maybe<(
     { __typename?: 'Post' }
-    & Pick<Post, 'id' | 'title' | 'snippet' | 'creatorId' | 'createdAt'>
+    & Pick<Post, 'id' | 'title' | 'body' | 'creatorId' | 'createdAt'>
     & { creator: (
       { __typename?: 'User' }
       & Pick<User, 'id' | 'username'>
@@ -447,7 +447,7 @@ export const PostDocument = gql`
   post(postID: $postID) {
     id
     title
-    snippet
+    body
     creatorId
     creator {
       id

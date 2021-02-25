@@ -33,6 +33,7 @@ const FormField = (props: FormFieldProps) => {
           e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
         ) => props.onChange(e.target.value)}
         required
+        rows="12"
       />
       <FormErrorMessage>
         <FormErrorIcon></FormErrorIcon>
