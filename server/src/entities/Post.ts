@@ -29,12 +29,16 @@ export class Post extends BaseEntity {
 
   @Field(() => ID)
   @Column()
-  creatorId: string;
+  creatorID: string;
 
   @Field(() => User)
   @ManyToOne(() => User)
-  @JoinColumn({ name: "creatorId" })
+  @JoinColumn({ name: "creatorID" })
   creator: User;
+
+  @Field()
+  @Column({ default: 0 })
+  likes: number;
 
   @Field()
   @CreateDateColumn()

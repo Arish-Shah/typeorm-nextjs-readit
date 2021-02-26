@@ -17,8 +17,8 @@ const App = () => {
       <Route path="/register" component={Register} exact />
       <Route path="/login" component={Login} exact />
       <Route path="/create-post" component={CreatePost} exact />
-      <Route path="/post/:id" component={Post} exact />
-      <Route path="/posts/edit/:id" component={EditPost} exact />
+      <Route path="/post/:postID" component={Post} exact />
+      <Route path="/posts/edit/:postID" component={EditPost} exact />
       <Redirect to="/posts" />
     </Switch>
   );

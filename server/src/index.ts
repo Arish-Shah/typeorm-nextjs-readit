@@ -11,6 +11,7 @@ import dotenv from "dotenv";
 
 import { UserResolver } from "./resolvers/user";
 import { PostResolver } from "./resolvers/post";
+import { LikeResolver } from "./resolvers/like";
 
 dotenv.config();
 
@@ -24,7 +25,7 @@ const main = async () => {
 
   const server = new ApolloServer({
     schema: await buildSchema({
-      resolvers: [UserResolver, PostResolver],
+      resolvers: [UserResolver, PostResolver, LikeResolver],
       emitSchemaFile: true,
     }),
     context: ({ req, res }) => ({ req, res }),

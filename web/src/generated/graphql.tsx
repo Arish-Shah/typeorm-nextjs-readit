@@ -42,8 +42,9 @@ export type Post = {
   id: Scalars['ID'];
   title: Scalars['String'];
   body: Scalars['String'];
-  creatorId: Scalars['ID'];
+  creatorID: Scalars['ID'];
   creator: User;
+  likes: Scalars['Float'];
   createdAt: Scalars['DateTime'];
   updatedAt: Scalars['DateTime'];
   snippet: Scalars['String'];
@@ -56,6 +57,8 @@ export type Mutation = {
   logout: Scalars['Boolean'];
   createPost: PostResponse;
   deletePost: Scalars['Boolean'];
+  editPost: Scalars['Boolean'];
+  like: Scalars['Boolean'];
 };
 
 
@@ -76,6 +79,17 @@ export type MutationCreatePostArgs = {
 
 
 export type MutationDeletePostArgs = {
+  postID: Scalars['ID'];
+};
+
+
+export type MutationEditPostArgs = {
+  input: PostInput;
+  postID: Scalars['ID'];
+};
+
+
+export type MutationLikeArgs = {
   postID: Scalars['ID'];
 };
 
@@ -111,6 +125,20 @@ export type PostInput = {
   body: Scalars['String'];
 };
 
+export type RegularPostFragment = (
+  { __typename?: 'Post' }
+  & Pick<Post, 'id' | 'title' | 'likes' | 'creatorID' | 'createdAt'>
+  & { creator: (
+    { __typename?: 'User' }
+    & RegularUserFragment
+  ) }
+);
+
+export type RegularUserFragment = (
+  { __typename?: 'User' }
+  & Pick<User, 'id' | 'username'>
+);
+
 export type CreatePostMutationVariables = Exact<{
   input: PostInput;
 }>;
@@ -140,6 +168,17 @@ export type DeletePostMutation = (
   & Pick<Mutation, 'deletePost'>
 );
 
+export type EditPostMutationVariables = Exact<{
+  postID: Scalars['ID'];
+  input: PostInput;
+}>;
+
+
+export type EditPostMutation = (
+  { __typename?: 'Mutation' }
+  & Pick<Mutation, 'editPost'>
+);
+
 export type LoginMutationVariables = Exact<{
   username: Scalars['String'];
   password: Scalars['String'];
@@ -152,7 +191,7 @@ export type LoginMutation = (
     { __typename?: 'UserResponse' }
     & { user?: Maybe<(
       { __typename?: 'User' }
-      & Pick<User, 'id' | 'username'>
+      & RegularUserFragment
     )>, errors?: Maybe<(
       { __typename?: 'FieldError' }
       & Pick<FieldError, 'username' | 'password'>
@@ -179,7 +218,7 @@ export type RegisterMutation = (
     { __typename?: 'UserResponse' }
     & { user?: Maybe<(
       { __typename?: 'User' }
-      & Pick<User, 'id' | 'username'>
+      & RegularUserFragment
     )>, errors?: Maybe<(
       { __typename?: 'FieldError' }
       & Pick<FieldError, 'email' | 'username' | 'password'>
@@ -194,7 +233,7 @@ export type MeQuery = (
   { __typename?: 'Query' }
   & { me?: Maybe<(
     { __typename?: 'User' }
-    & Pick<User, 'id' | 'username'>
+    & RegularUserFragment
   )> }
 );
 
@@ -207,11 +246,8 @@ export type PostQuery = (
   { __typename?: 'Query' }
   & { post?: Maybe<(
     { __typename?: 'Post' }
-    & Pick<Post, 'id' | 'title' | 'body' | 'creatorId' | 'createdAt'>
-    & { creator: (
-      { __typename?: 'User' }
-      & Pick<User, 'id' | 'username'>
-    ) }
+    & Pick<Post, 'body'>
+    & RegularPostFragment
   )> }
 );
 
@@ -222,15 +258,29 @@ export type PostsQuery = (
   { __typename?: 'Query' }
   & { posts: Array<(
     { __typename?: 'Post' }
-    & Pick<Post, 'id' | 'title' | 'snippet' | 'creatorId' | 'createdAt'>
-    & { creator: (
-      { __typename?: 'User' }
-      & Pick<User, 'username'>
-    ) }
+    & Pick<Post, 'snippet'>
+    & RegularPostFragment
   )> }
 );
 
-
+export const RegularUserFragmentDoc = gql`
+    fragment RegularUser on User {
+  id
+  username
+}
+    `;
+export const RegularPostFragmentDoc = gql`
+    fragment RegularPost on Post {
+  id
+  title
+  likes
+  creatorID
+  createdAt
+  creator {
+    ...RegularUser
+  }
+}
+    ${RegularUserFragmentDoc}`;
 export const CreatePostDocument = gql`
     mutation CreatePost($input: PostInput!) {
   createPost(input: $input) {
@@ -300,12 +350,42 @@ export function useDeletePostMutation(baseOptions?: Apollo.MutationHookOptions<D
 export type DeletePostMutationHookResult = ReturnType<typeof useDeletePostMutation>;
 export type DeletePostMutationResult = Apollo.MutationResult<DeletePostMutation>;
 export type DeletePostMutationOptions = Apollo.BaseMutationOptions<DeletePostMutation, DeletePostMutationVariables>;
+export const EditPostDocument = gql`
+    mutation EditPost($postID: ID!, $input: PostInput!) {
+  editPost(postID: $postID, input: $input)
+}
+    `;
+export type EditPostMutationFn = Apollo.MutationFunction<EditPostMutation, EditPostMutationVariables>;
+
+/**
+ * __useEditPostMutation__
+ *
+ * To run a mutation, you first call `useEditPostMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEditPostMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [editPostMutation, { data, loading, error }] = useEditPostMutation({
+ *   variables: {
+ *      postID: // value for 'postID'
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useEditPostMutation(baseOptions?: Apollo.MutationHookOptions<EditPostMutation, EditPostMutationVariables>) {
+        return Apollo.useMutation<EditPostMutation, EditPostMutationVariables>(EditPostDocument, baseOptions);
+      }
+export type EditPostMutationHookResult = ReturnType<typeof useEditPostMutation>;
+export type EditPostMutationResult = Apollo.MutationResult<EditPostMutation>;
+export type EditPostMutationOptions = Apollo.BaseMutationOptions<EditPostMutation, EditPostMutationVariables>;
 export const LoginDocument = gql`
     mutation Login($username: String!, $password: String!) {
   login(username: $username, password: $password) {
     user {
-      id
-      username
+      ...RegularUser
     }
     errors {
       username
@@ -313,7 +393,7 @@ export const LoginDocument = gql`
     }
   }
 }
-    `;
+    ${RegularUserFragmentDoc}`;
 export type LoginMutationFn = Apollo.MutationFunction<LoginMutation, LoginMutationVariables>;
 
 /**
@@ -373,8 +453,7 @@ export const RegisterDocument = gql`
     mutation Register($input: RegisterInput!) {
   register(input: $input) {
     user {
-      id
-      username
+      ...RegularUser
     }
     errors {
       email
@@ -383,7 +462,7 @@ export const RegisterDocument = gql`
     }
   }
 }
-    `;
+    ${RegularUserFragmentDoc}`;
 export type RegisterMutationFn = Apollo.MutationFunction<RegisterMutation, RegisterMutationVariables>;
 
 /**
@@ -412,11 +491,10 @@ export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutatio
 export const MeDocument = gql`
     query Me {
   me {
-    id
-    username
+    ...RegularUser
   }
 }
-    `;
+    ${RegularUserFragmentDoc}`;
 
 /**
  * __useMeQuery__
@@ -445,18 +523,11 @@ export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
 export const PostDocument = gql`
     query Post($postID: ID!) {
   post(postID: $postID) {
-    id
-    title
+    ...RegularPost
     body
-    creatorId
-    creator {
-      id
-      username
-    }
-    createdAt
   }
 }
-    `;
+    ${RegularPostFragmentDoc}`;
 
 /**
  * __usePostQuery__
@@ -486,17 +557,11 @@ export type PostQueryResult = Apollo.QueryResult<PostQuery, PostQueryVariables>;
 export const PostsDocument = gql`
     query Posts {
   posts {
-    id
-    title
+    ...RegularPost
     snippet
-    creatorId
-    creator {
-      username
-    }
-    createdAt
   }
 }
-    `;
+    ${RegularPostFragmentDoc}`;
 
 /**
  * __usePostsQuery__

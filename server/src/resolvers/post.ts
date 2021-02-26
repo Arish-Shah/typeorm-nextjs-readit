@@ -4,6 +4,7 @@ import {
   Field,
   FieldResolver,
   ID,
+  Int,
   Mutation,
   ObjectType,
   Query,
@@ -19,6 +20,7 @@ import { Context } from "./types/context";
 import { FieldError } from "./types/field-error";
 import { PostInput } from "./types/input";
 import { postValidator } from "../utils/validators";
+import { Like } from "../entities/Like";
 
 @ObjectType()
 class PostResponse {
@@ -48,7 +50,12 @@ export class PostResolver {
 
   @FieldResolver(() => User)
   creator(@Root() parent: Post) {
-    return User.findOne(parent.creatorId);
+    return User.findOne(parent.creatorID);
+  }
+
+  @FieldResolver(() => Int)
+  likes(@Root() parent: Post) {
+    return Like.count({ where: { postID: parent.id } });
   }
 
   @Mutation(() => PostResponse)
@@ -65,8 +72,8 @@ export class PostResolver {
     }
 
     // @ts-ignore
-    const { userId } = req.session;
-    const post = await Post.create({ ...input, creatorId: userId }).save();
+    const { userID } = req.session;
+    const post = await Post.create({ ...input, creatorID: userID }).save();
     return {
       post,
     };
@@ -79,12 +86,31 @@ export class PostResolver {
     @Ctx() { req }: Context
   ) {
     // @ts-ignore
-    const { userId } = req.session;
+    const { userID } = req.session;
     const post = await Post.findOne(postID);
-    if (post?.creatorId !== userId) {
+    if (post?.creatorID !== userID) {
       return false;
     }
     Post.delete(postID);
     return true;
+  }
+
+  @Mutation(() => Boolean)
+  @UseMiddleware(isAuth)
+  async editPost(
+    @Arg("postID", () => ID) postID: string,
+    @Arg("input") input: PostInput,
+    @Ctx() { req }: Context
+  ) {
+    // @ts-ignore
+    const { userID } = req.session;
+    const post = await Post.findOne(postID);
+    console.log({ userID, postID });
+    if (post?.creatorID === userID) {
+      Post.update(postID, { title: input.title, body: input.body });
+      return true;
+    } else {
+      return false;
+    }
   }
 }

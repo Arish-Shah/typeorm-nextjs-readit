@@ -1,16 +1,16 @@
 import { Flex, Heading, Text } from "@chakra-ui/react";
 import { Fragment } from "react";
 import { useParams } from "react-router-dom";
+
+import { useMeQuery, usePostQuery } from "../generated/graphql";
 import Actions from "../components/Actions";
 import { PostSkeleton } from "../components/Skeleton";
 
-import { useMeQuery, usePostQuery } from "../generated/graphql";
-
 const Post = () => {
-  const { id } = useParams<{ id: string }>();
+  const { postID } = useParams<{ postID: string }>();
   const { data, loading } = usePostQuery({
     variables: {
-      postID: id,
+      postID,
     },
   });
   const { data: meData } = useMeQuery();
@@ -29,10 +29,10 @@ const Post = () => {
             Posted at {new Date(data.post.createdAt).toLocaleString()}
           </Text>
         </Flex>
-        {data.post.creatorId === meData?.me?.id && (
-          <Actions postID={data.post.id} />
+        {data.post.creatorID === meData?.me?.id && (
+          <Actions postID={data.post.id} likes={data.post.likes} />
         )}
-        <Text mt="6">{data.post.body}</Text>
+        <Text mt="4">{data.post.body}</Text>
       </Fragment>
     );
   }

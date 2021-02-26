@@ -19,6 +19,8 @@ type FieldError {
 type Mutation {
   createPost(input: PostInput!): PostResponse!
   deletePost(postID: ID!): Boolean!
+  editPost(input: PostInput!, postID: ID!): Boolean!
+  like(postID: ID!): Boolean!
   login(password: String!, username: String!): UserResponse!
   logout: Boolean!
   register(input: RegisterInput!): UserResponse!
@@ -28,8 +30,9 @@ type Post {
   body: String!
   createdAt: DateTime!
   creator: User!
-  creatorId: ID!
+  creatorID: ID!
   id: ID!
+  likes: Float!
   snippet: String!
   title: String!
   updatedAt: DateTime!

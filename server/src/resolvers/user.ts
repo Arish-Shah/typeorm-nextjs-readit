@@ -29,11 +29,11 @@ export class UserResolver {
   @Query(() => User, { nullable: true })
   me(@Ctx() { req }: Context) {
     // @ts-ignore
-    const { userId } = req.session;
-    if (!userId) {
+    const { userID } = req.session;
+    if (!userID) {
       return null;
     }
-    return User.findOne(userId);
+    return User.findOne(userID);
   }
 
   @Mutation(() => UserResponse)
@@ -61,7 +61,7 @@ export class UserResolver {
     }
 
     // @ts-ignore
-    req.session.userId = user.id;
+    req.session.userID = user.id;
 
     return {
       user,
@@ -82,7 +82,7 @@ export class UserResolver {
     try {
       const user = await User.create({ ...input }).save();
       // @ts-ignore
-      req.session.userId = user.id;
+      req.session.userID = user.id;
       return { user };
     } catch (err) {
       const detail = err.detail as string;

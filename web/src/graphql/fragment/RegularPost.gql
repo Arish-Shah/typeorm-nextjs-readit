@@ -1,0 +1,10 @@
+fragment RegularPost on Post {
+  id
+  title
+  likes
+  creatorID
+  createdAt
+  creator {
+    ...RegularUser
+  }
+}

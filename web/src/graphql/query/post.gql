@@ -1,13 +1,6 @@
 query Post($postID: ID!) {
   post(postID: $postID) {
-    id
-    title
+    ...RegularPost
     body
-    creatorId
-    creator {
-      id
-      username
-    }
-    createdAt
   }
 }

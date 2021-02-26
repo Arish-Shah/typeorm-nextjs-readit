@@ -1,16 +1,16 @@
 import { Button, Heading } from "@chakra-ui/react";
-import { useState } from "react";
+import { FormEventHandler, useState } from "react";
 import { useParams } from "react-router-dom";
 
 import FormField from "../components/FormField";
 import { PostSkeleton } from "../components/Skeleton";
-import { usePostQuery } from "../generated/graphql";
+import { usePostQuery, useEditPostMutation } from "../generated/graphql";
 
 const EditPost = () => {
-  const { id } = useParams<{ id: string }>();
+  const { postID } = useParams<{ postID: string }>();
   const { data, loading } = usePostQuery({
     variables: {
-      postID: id,
+      postID,
     },
     onCompleted(data) {
       if (data.post) {
@@ -19,10 +19,18 @@ const EditPost = () => {
       }
     },
   });
+  const [editPost, { loading: editLoading }] = useEditPostMutation();
+
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
 
-  const handleSubmit = () => {};
+  const handleSubmit: FormEventHandler = async (event) => {
+    event.preventDefault();
+    const response = await editPost({
+      variables: { postID, input: { title, body } },
+    });
+    console.log(response);
+  };
 
   if (loading) {
     return PostSkeleton;
@@ -46,7 +54,7 @@ const EditPost = () => {
           onChange={setBody}
           isTextarea={true}
         />
-        <Button type="submit" colorScheme="teal" isLoading={loading}>
+        <Button type="submit" colorScheme="teal" isLoading={editLoading}>
           update post
         </Button>
       </form>
