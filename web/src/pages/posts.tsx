@@ -1,4 +1,4 @@
-import { Box, Stack, Text, Link } from "@chakra-ui/react";
+import { Box, Stack, Text, Link, Button } from "@chakra-ui/react";
 import { Link as ReactLink } from "react-router-dom";
 
 import Post from "../components/PostItem";
@@ -6,7 +6,20 @@ import { PostsSkeleton } from "../components/Skeleton";
 import { usePostsQuery } from "../generated/graphql";
 
 const Posts = () => {
-  const { data, loading } = usePostsQuery();
+  const { data, loading, fetchMore } = usePostsQuery({
+    variables: {
+      offset: 0,
+      limit: 5,
+    },
+  });
+
+  const onLoadMore = () => {
+    fetchMore({
+      variables: {
+        offset: data?.posts.length,
+      },
+    });
+  };
 
   if (loading) {
     return PostsSkeleton;
@@ -19,6 +32,7 @@ const Posts = () => {
           {data.posts.map((post) => (
             <Post key={post.id} post={post} />
           ))}
+          <Button onClick={onLoadMore}>load more</Button>
         </Stack>
       </Box>
     );

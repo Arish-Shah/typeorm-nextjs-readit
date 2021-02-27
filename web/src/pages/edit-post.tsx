@@ -24,7 +24,7 @@ const EditPost = () => {
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
 
-  const handleSubmit: FormEventHandler = async (event) => {
+  const onSubmit: FormEventHandler = async (event) => {
     event.preventDefault();
     const response = await editPost({
       variables: { postID, input: { title, body } },
@@ -38,7 +38,7 @@ const EditPost = () => {
 
   if (!loading && data?.post) {
     return (
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={onSubmit}>
         <FormField
           id="title"
           type="text"

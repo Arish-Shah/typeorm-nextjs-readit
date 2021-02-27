@@ -26,7 +26,7 @@ const Navbar = () => {
 
   let rightSide = null;
 
-  const handleLogout = () => {
+  const onLogout = () => {
     logout({
       update(cache, { data }) {
         if (data?.logout) {
@@ -44,29 +44,31 @@ const Navbar = () => {
 
   if (!loading) {
     rightSide = data?.me ? (
-      <Menu placement="bottom-end" closeOnBlur={true}>
-        {({ isOpen }) => (
-          <Fragment>
-            <MenuButton
-              as={Button}
-              isActive={isOpen}
-              rightIcon={<ChevronDownIcon />}
-              colorScheme="teal"
-            >
-              {data.me!.username}
-            </MenuButton>
-            <MenuList>
-              <MenuItem as={Link} to="/">
-                home
-              </MenuItem>
-              <MenuItem as={Link} to="/create-post">
-                create post
-              </MenuItem>
-              <MenuItem onClick={handleLogout}>logout</MenuItem>
-            </MenuList>
-          </Fragment>
-        )}
-      </Menu>
+      <Fragment>
+        <Button as={Link} to="/create-post" colorScheme="teal">
+          create post
+        </Button>
+        <Menu placement="bottom-end" closeOnBlur={true}>
+          {({ isOpen }) => (
+            <Fragment>
+              <MenuButton
+                as={Button}
+                isActive={isOpen}
+                rightIcon={<ChevronDownIcon />}
+                ml="3"
+              >
+                {data.me!.username}
+              </MenuButton>
+              <MenuList>
+                <MenuItem as={Link} to="/">
+                  home
+                </MenuItem>
+                <MenuItem onClick={onLogout}>logout</MenuItem>
+              </MenuList>
+            </Fragment>
+          )}
+        </Menu>
+      </Fragment>
     ) : (
       <Fragment>
         <Button colorScheme="teal" as={Link} to="/register">

@@ -10,7 +10,7 @@ const CreatePost = () => {
 
   const [createPost, { loading }] = useCreatePostMutation();
 
-  const handleSubmit: FormEventHandler = async (event) => {
+  const onSubmit: FormEventHandler = async (event) => {
     event.preventDefault();
     const response = await createPost({
       variables: { input: { title, body } },
@@ -19,7 +19,7 @@ const CreatePost = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={onSubmit}>
       <FormField
         id="title"
         type="text"

@@ -52,7 +52,7 @@ type PostResponse {
 type Query {
   me: User
   post(postID: ID!): Post
-  posts: [Post!]!
+  posts(limit: Int!, offset: Int): [Post!]!
 }
 
 input RegisterInput {

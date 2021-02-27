@@ -16,7 +16,7 @@ const Register = () => {
 
   const [register, { loading }] = useRegisterMutation();
 
-  const handleSubmit: FormEventHandler = async (event) => {
+  const onSubmit: FormEventHandler = async (event) => {
     event.preventDefault();
     const response = await register({
       variables: {
@@ -45,7 +45,7 @@ const Register = () => {
   };
 
   return (
-    <Box as="form" onSubmit={handleSubmit} maxWidth="xl" mx="auto">
+    <Box as="form" onSubmit={onSubmit} maxWidth="xl" mx="auto">
       <FormField
         id="email"
         label="Email"

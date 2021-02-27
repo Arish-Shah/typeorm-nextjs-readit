@@ -13,7 +13,6 @@ import { UserResolver } from "./resolvers/user";
 import { PostResolver } from "./resolvers/post";
 import { LikeResolver } from "./resolvers/like";
 import { createUserLoader } from "./utils/createUserLoader";
-import { createLikeLoader } from "./utils/createLikeLoader";
 
 dotenv.config();
 
@@ -34,7 +33,6 @@ const main = async () => {
       req,
       res,
       userLoader: createUserLoader(),
-      likeLoader: createLikeLoader(),
     }),
   });
 

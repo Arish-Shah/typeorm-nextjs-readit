@@ -21,6 +21,7 @@ import { FieldError } from "./types/field-error";
 import { PostInput } from "./types/input";
 import { postValidator } from "../utils/validators";
 import { Like } from "../entities/Like";
+import { getConnection } from "typeorm";
 
 @ObjectType()
 class PostResponse {
@@ -34,8 +35,21 @@ class PostResponse {
 @Resolver(Post)
 export class PostResolver {
   @Query(() => [Post])
-  posts() {
-    return Post.find({ order: { createdAt: "DESC" } });
+  posts(
+    @Arg("limit", () => Int) limit: number,
+    @Arg("offset", () => Int, { nullable: true }) offset?: number
+  ): Promise<Post[]> {
+    const parameters = [limit, offset || 0];
+    return getConnection().query(
+      `
+      SELECT *
+      FROM posts
+      ORDER BY "createdAt" DESC
+      LIMIT $1
+      OFFSET $2 ROWS
+    `,
+      parameters
+    );
   }
 
   @Query(() => Post, { nullable: true })

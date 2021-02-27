@@ -11,16 +11,29 @@ import { BrowserRouter } from "react-router-dom";
 
 import App from "./App";
 import theme from "./theme";
+import { Post } from "./generated/graphql";
 
-const httpLink = createHttpLink({
+const link = createHttpLink({
   uri: "http://localhost:4000/graphql",
   credentials: "include",
 });
 
-const client = new ApolloClient({
-  link: httpLink,
-  cache: new InMemoryCache(),
+const cache = new InMemoryCache({
+  typePolicies: {
+    Query: {
+      fields: {
+        posts: {
+          keyArgs: false,
+          merge(existing: Post[] | undefined, incoming: Post[]): Post[] {
+            return [...(existing || []), ...incoming];
+          },
+        },
+      },
+    },
+  },
 });
+
+const client = new ApolloClient({ link, cache });
 
 ReactDOM.render(
   <BrowserRouter>

@@ -14,7 +14,7 @@ const Login = () => {
 
   const [login, { loading }] = useLoginMutation();
 
-  const handleSubmit: FormEventHandler = async (event) => {
+  const onSubmit: FormEventHandler = async (event) => {
     event.preventDefault();
     const response = await login({
       variables: { username, password },
@@ -40,7 +40,7 @@ const Login = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={onSubmit}>
       <FormField
         id="username"
         label="Username"
