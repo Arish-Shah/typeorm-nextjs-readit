@@ -2,6 +2,7 @@ fragment RegularPost on Post {
   id
   title
   likes
+  isLiked
   creatorID
   createdAt
   creator {

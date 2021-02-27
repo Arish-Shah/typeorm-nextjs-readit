@@ -18,7 +18,7 @@ const App = () => {
       <Route path="/login" component={Login} exact />
       <Route path="/create-post" component={CreatePost} exact />
       <Route path="/post/:postID" component={Post} exact />
-      <Route path="/posts/edit/:postID" component={EditPost} exact />
+      <Route path="/post/edit/:postID" component={EditPost} exact />
       <Redirect to="/posts" />
     </Switch>
   );

@@ -1,17 +1,14 @@
 import { Heading, LinkBox, LinkOverlay, Text } from "@chakra-ui/react";
 import { Link as ReactLink } from "react-router-dom";
 
-import { useMeQuery } from "../generated/graphql";
 import { Fragment } from "react";
-import Actions from "./Actions";
+import PostActions from "./PostActions";
 
 interface PostProps {
   post: any;
 }
 
 const PostItem = ({ post }: PostProps) => {
-  const { data } = useMeQuery();
-
   return (
     <Fragment>
       <LinkBox
@@ -25,9 +22,12 @@ const PostItem = ({ post }: PostProps) => {
         <Heading fontSize="lg">{post.title}</Heading>
         <Text mt="1">by {post.creator.username}</Text>
         <Text mt="3">{post.snippet}...</Text>
-        {data?.me?.id === post.creatorID && (
-          <Actions postID={post.id} likes={post.likes} />
-        )}
+        <PostActions
+          postID={post.id}
+          creatorID={post.creatorID}
+          likes={post.likes}
+          isLiked={post.isLiked}
+        />
       </LinkBox>
     </Fragment>
   );

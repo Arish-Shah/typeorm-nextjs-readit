@@ -32,6 +32,7 @@ type Post {
   creator: User!
   creatorID: ID!
   id: ID!
+  isLiked: Boolean
   likes: Float!
   snippet: String!
   title: String!

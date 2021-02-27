@@ -49,13 +49,26 @@ export class PostResolver {
   }
 
   @FieldResolver(() => User)
-  creator(@Root() parent: Post) {
-    return User.findOne(parent.creatorID);
+  creator(@Root() parent: Post, @Ctx() { userLoader }: Context) {
+    return userLoader.load(parent.creatorID);
   }
 
   @FieldResolver(() => Int)
   likes(@Root() parent: Post) {
     return Like.count({ where: { postID: parent.id } });
+  }
+
+  @FieldResolver(() => Boolean, { nullable: true })
+  async isLiked(@Root() parent: Post, @Ctx() { req }: Context) {
+    // @ts-ignore
+    const creatorID = req.session.userID;
+    if (!creatorID) {
+      return null;
+    }
+    const isLiked = await Like.findOne({
+      where: { postID: parent.id, creatorID },
+    });
+    return !!isLiked;
   }
 
   @Mutation(() => PostResponse)
