@@ -9,6 +9,7 @@ import {
   Button,
 } from "@chakra-ui/react";
 import { useRef } from "react";
+import { useHistory } from "react-router-dom";
 
 import { useDeletePostMutation } from "../generated/graphql";
 
@@ -23,12 +24,23 @@ const DeletePostDialog = (props: DeletePostDialogProps) => {
 
   const [deletePost, { loading }] = useDeletePostMutation();
 
+  const history = useHistory();
+
   const onYesClick = async () => {
-    await deletePost({
+    const response = await deletePost({
       variables: {
         postID: props.deletingPostID!,
       },
+      update(cache) {
+        cache.evict({
+          id: "Post:" + props.deletingPostID!,
+        });
+      },
     });
+    console.log(response);
+    if (response.data) {
+      history.push("/");
+    }
     props.onClose();
   };
 

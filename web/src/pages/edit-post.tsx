@@ -4,10 +4,17 @@ import { useParams } from "react-router-dom";
 
 import FormField from "../components/FormField";
 import { PostSkeleton } from "../components/Skeleton";
-import { usePostQuery, useEditPostMutation } from "../generated/graphql";
+import {
+  usePostQuery,
+  useEditPostMutation,
+  useMeQuery,
+} from "../generated/graphql";
+import useIsAuth from "../utils/useIsAuth";
 
 const EditPost = () => {
+  useIsAuth();
   const { postID } = useParams<{ postID: string }>();
+  const { data: meData } = useMeQuery();
   const { data, loading } = usePostQuery({
     variables: {
       postID,
@@ -34,6 +41,14 @@ const EditPost = () => {
 
   if (loading) {
     return PostSkeleton;
+  }
+
+  if (!loading && meData?.me?.id !== data?.post?.creatorID) {
+    return (
+      <Heading size="md" textAlign="center">
+        post not found
+      </Heading>
+    );
   }
 
   if (!loading && data?.post) {
@@ -63,7 +78,7 @@ const EditPost = () => {
 
   return (
     <Heading size="md" textAlign="center">
-      Post Not Found
+      post not found
     </Heading>
   );
 };

@@ -1,5 +1,6 @@
 import { useState, FormEventHandler } from "react";
 import { Box, Button } from "@chakra-ui/react";
+import { useHistory } from "react-router-dom";
 
 import FormField from "../components/FormField";
 import { MeDocument, MeQuery, useRegisterMutation } from "../generated/graphql";
@@ -15,6 +16,7 @@ const Register = () => {
   });
 
   const [register, { loading }] = useRegisterMutation();
+  const history = useHistory();
 
   const onSubmit: FormEventHandler = async (event) => {
     event.preventDefault();
@@ -41,6 +43,9 @@ const Register = () => {
         username: response.data.register.errors.username || "",
         password: response.data.register.errors.password || "",
       });
+    }
+    if (response.data?.register.user) {
+      history.push("/");
     }
   };
 

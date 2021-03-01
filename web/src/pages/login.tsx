@@ -1,9 +1,9 @@
 import { useState, FormEventHandler } from "react";
 import { Button } from "@chakra-ui/react";
+import { useHistory } from "react-router-dom";
 
 import FormField from "../components/FormField";
 import { MeDocument, MeQuery, useLoginMutation } from "../generated/graphql";
-import { useHistory } from "react-router-dom";
 import useSearchParams from "../utils/useSearchParams";
 
 const Login = () => {
@@ -45,6 +45,8 @@ const Login = () => {
       const next = search.get("next");
       if (next) {
         history.replace(next);
+      } else {
+        history.push("/");
       }
     }
   };
