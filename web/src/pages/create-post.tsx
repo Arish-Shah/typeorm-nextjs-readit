@@ -3,8 +3,10 @@ import { FormEventHandler, useState } from "react";
 
 import FormField from "../components/FormField";
 import { useCreatePostMutation } from "../generated/graphql";
+import useIsAuth from "../utils/useIsAuth";
 
 const CreatePost = () => {
+  useIsAuth();
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
 

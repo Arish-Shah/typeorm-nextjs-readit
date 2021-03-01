@@ -3,6 +3,8 @@ import { Button } from "@chakra-ui/react";
 
 import FormField from "../components/FormField";
 import { MeDocument, MeQuery, useLoginMutation } from "../generated/graphql";
+import { useHistory } from "react-router-dom";
+import useSearchParams from "../utils/useSearchParams";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -13,6 +15,8 @@ const Login = () => {
   });
 
   const [login, { loading }] = useLoginMutation();
+  const history = useHistory();
+  const search = useSearchParams();
 
   const onSubmit: FormEventHandler = async (event) => {
     event.preventDefault();
@@ -36,6 +40,12 @@ const Login = () => {
         username: response.data.login.errors.username || "",
         password: response.data.login.errors.password || "",
       });
+    }
+    if (response.data?.login.user) {
+      const next = search.get("next");
+      if (next) {
+        history.replace(next);
+      }
     }
   };
 

@@ -32,7 +32,9 @@ const Posts = () => {
           {data.posts.map((post) => (
             <Post key={post.id} post={post} />
           ))}
-          <Button onClick={onLoadMore}>load more</Button>
+          <Button onClick={onLoadMore} isLoading={loading}>
+            load more
+          </Button>
         </Stack>
       </Box>
     );

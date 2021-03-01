@@ -1,7 +1,7 @@
 import { DeleteIcon, EditIcon, StarIcon } from "@chakra-ui/icons";
 import { Box, Button, Text, useDisclosure } from "@chakra-ui/react";
-import { Fragment } from "react";
-import { Link as ReactLink } from "react-router-dom";
+import { Fragment, useState } from "react";
+import { Link as ReactLink, useHistory } from "react-router-dom";
 
 import DeletePostDialog from "./DeletePostDialog";
 import { useLikeMutation, useMeQuery } from "../generated/graphql";
@@ -17,13 +17,20 @@ const PostActions = (props: PostActionsProps) => {
   const { isOpen, onClose, onOpen } = useDisclosure();
   const { data } = useMeQuery();
   const [like] = useLikeMutation();
+  const [liked, setLiked] = useState(props.isLiked);
+  const history = useHistory();
 
   const onLike = () => {
-    like({
-      variables: {
-        postID: props.postID,
-      },
-    });
+    if (data?.me) {
+      setLiked((liked) => !liked);
+      like({
+        variables: {
+          postID: props.postID,
+        },
+      });
+    } else {
+      history.replace("/login?next=/");
+    }
   };
 
   return (
@@ -35,7 +42,7 @@ const PostActions = (props: PostActionsProps) => {
       />
       <Box mt="4">
         <Button size="sm" onClick={onLike}>
-          <StarIcon color={props.isLiked ? "yellow" : ""} />
+          <StarIcon color={liked ? "yellow" : ""} />
           <Text ml="3">{props.likes}</Text>
         </Button>
         {data?.me?.id === props.creatorID && (
