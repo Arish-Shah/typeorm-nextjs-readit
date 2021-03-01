@@ -32,15 +32,25 @@ class PostResponse {
   errors?: FieldError;
 }
 
+@ObjectType()
+class PaginatedPosts {
+  @Field(() => [Post])
+  posts: Post[];
+
+  @Field()
+  hasMore: boolean;
+}
+
 @Resolver(Post)
 export class PostResolver {
-  @Query(() => [Post])
-  posts(
+  @Query(() => PaginatedPosts)
+  async posts(
     @Arg("limit", () => Int) limit: number,
     @Arg("offset", () => Int, { nullable: true }) offset?: number
-  ): Promise<Post[]> {
-    const parameters = [limit, offset || 0];
-    return getConnection().query(
+  ): Promise<PaginatedPosts> {
+    const limitPlusOne = limit + 1;
+    const parameters = [limitPlusOne, offset || 0];
+    const posts: Post[] = await getConnection().query(
       `
       SELECT *
       FROM posts
@@ -50,6 +60,10 @@ export class PostResolver {
     `,
       parameters
     );
+    return {
+      posts: posts.slice(0, limit),
+      hasMore: posts.length === limitPlusOne,
+    };
   }
 
   @Query(() => Post, { nullable: true })

@@ -26,6 +26,11 @@ type Mutation {
   register(input: RegisterInput!): UserResponse!
 }
 
+type PaginatedPosts {
+  hasMore: Boolean!
+  posts: [Post!]!
+}
+
 type Post {
   body: String!
   createdAt: DateTime!
@@ -52,7 +57,7 @@ type PostResponse {
 type Query {
   me: User
   post(postID: ID!): Post
-  posts(limit: Int!, offset: Int): [Post!]!
+  posts(limit: Int!, offset: Int): PaginatedPosts!
 }
 
 input RegisterInput {
