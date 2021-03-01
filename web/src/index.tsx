@@ -11,7 +11,7 @@ import { BrowserRouter } from "react-router-dom";
 
 import App from "./App";
 import theme from "./theme";
-import { Post } from "./generated/graphql";
+import { PaginatedPosts } from "./generated/graphql";
 
 const link = createHttpLink({
   uri: "http://localhost:4000/graphql",
@@ -24,8 +24,14 @@ const cache = new InMemoryCache({
       fields: {
         posts: {
           keyArgs: false,
-          merge(existing: Post[] | undefined, incoming: Post[]): Post[] {
-            return [...(existing || []), ...incoming];
+          merge(
+            existing: PaginatedPosts | undefined,
+            incoming: PaginatedPosts
+          ): PaginatedPosts {
+            return {
+              ...incoming,
+              posts: [...(existing?.posts || []), ...incoming.posts],
+            };
           },
         },
       },
@@ -33,7 +39,7 @@ const cache = new InMemoryCache({
   },
 });
 
-const client = new ApolloClient({ link, cache });
+const client = new ApolloClient({ link, cache, connectToDevTools: true });
 
 ReactDOM.render(
   <BrowserRouter>

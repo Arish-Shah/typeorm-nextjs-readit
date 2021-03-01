@@ -16,7 +16,7 @@ export class Like extends BaseEntity {
   @PrimaryColumn()
   creatorID: string;
 
-  @ManyToOne(() => Post)
+  @ManyToOne(() => Post, { onDelete: "CASCADE" })
   @JoinColumn({ name: "postID" })
   post: Post;
 

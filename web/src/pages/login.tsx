@@ -5,8 +5,11 @@ import { useHistory } from "react-router-dom";
 import FormField from "../components/FormField";
 import { MeDocument, MeQuery, useLoginMutation } from "../generated/graphql";
 import useSearchParams from "../utils/useSearchParams";
+import { useIsAuth } from "../utils/useIsAuth";
 
 const Login = () => {
+  useIsAuth(false);
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({
@@ -33,6 +36,7 @@ const Login = () => {
             },
           });
         }
+        cache.evict({ fieldName: "posts" });
       },
     });
     if (response.data?.login.errors) {

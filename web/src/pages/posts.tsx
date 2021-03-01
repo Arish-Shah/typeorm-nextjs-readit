@@ -9,14 +9,14 @@ const Posts = () => {
   const { data, loading, fetchMore } = usePostsQuery({
     variables: {
       offset: 0,
-      limit: 5,
+      limit: 2,
     },
   });
 
   const onLoadMore = () => {
     fetchMore({
       variables: {
-        offset: data?.posts.length,
+        offset: data?.posts.posts.length,
       },
     });
   };
@@ -25,16 +25,18 @@ const Posts = () => {
     return PostsSkeleton;
   }
 
-  if (!loading && data?.posts.length) {
+  if (!loading && data?.posts.posts.length) {
     return (
       <Box>
         <Stack spacing="4">
-          {data.posts.map((post) => (
+          {data.posts.posts.map((post) => (
             <Post key={post.id} post={post} />
           ))}
-          <Button onClick={onLoadMore} isLoading={loading}>
-            load more
-          </Button>
+          {data.posts.hasMore && (
+            <Button onClick={onLoadMore} isLoading={loading}>
+              load more
+            </Button>
+          )}
         </Stack>
       </Box>
     );

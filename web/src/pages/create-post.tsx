@@ -1,9 +1,10 @@
 import { Button } from "@chakra-ui/react";
 import { FormEventHandler, useState } from "react";
+import { useHistory } from "react-router-dom";
 
 import FormField from "../components/FormField";
 import { useCreatePostMutation } from "../generated/graphql";
-import useIsAuth from "../utils/useIsAuth";
+import { useIsAuth } from "../utils/useIsAuth";
 
 const CreatePost = () => {
   useIsAuth();
@@ -12,12 +13,19 @@ const CreatePost = () => {
 
   const [createPost, { loading }] = useCreatePostMutation();
 
+  const history = useHistory();
+
   const onSubmit: FormEventHandler = async (event) => {
     event.preventDefault();
     const response = await createPost({
       variables: { input: { title, body } },
+      update(cache) {
+        cache.evict({ fieldName: "posts" });
+      },
     });
-    console.log(response);
+    if (response.data?.createPost.post) {
+      history.push("/");
+    }
   };
 
   return (

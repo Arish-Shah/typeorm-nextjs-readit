@@ -34,6 +34,7 @@ const Register = () => {
               __typename: "Query",
             },
           });
+          cache.evict({ fieldName: "posts" });
         }
       },
     });

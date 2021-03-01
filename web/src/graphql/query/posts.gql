@@ -1,6 +1,9 @@
 query Posts($limit: Int!, $offset: Int) {
   posts(limit: $limit, offset: $offset) {
-    ...RegularPost
-    snippet
+    posts {
+      ...RegularPost
+      snippet
+    }
+    hasMore
   }
 }

@@ -1,6 +1,7 @@
+import { gql } from "@apollo/client";
 import { Button, Heading } from "@chakra-ui/react";
 import { FormEventHandler, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 
 import FormField from "../components/FormField";
 import { PostSkeleton } from "../components/Skeleton";
@@ -9,7 +10,7 @@ import {
   useEditPostMutation,
   useMeQuery,
 } from "../generated/graphql";
-import useIsAuth from "../utils/useIsAuth";
+import { useIsAuth } from "../utils/useIsAuth";
 
 const EditPost = () => {
   useIsAuth();
@@ -31,12 +32,34 @@ const EditPost = () => {
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
 
+  const history = useHistory();
+
   const onSubmit: FormEventHandler = async (event) => {
     event.preventDefault();
     const response = await editPost({
       variables: { postID, input: { title, body } },
+      update(cache, { data }) {
+        if (data?.editPost) {
+          const fragment = gql`
+            fragment _ on Post {
+              id
+              title
+              snippet
+              body
+            }
+          `;
+          cache.writeFragment({
+            id: "Post:" + postID,
+            fragment: fragment,
+            data: { title, snippet: body.substring(0, 50), body },
+          });
+        }
+      },
     });
-    console.log(response);
+
+    if (response.data?.editPost) {
+      history.push("/");
+    }
   };
 
   if (loading) {

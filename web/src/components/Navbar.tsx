@@ -13,17 +13,31 @@ import { ChevronDownIcon } from "@chakra-ui/icons";
 import { Fragment } from "react";
 import { Link } from "react-router-dom";
 
-import { useMeQuery, useLogoutMutation } from "../generated/graphql";
+import {
+  useMeQuery,
+  useLogoutMutation,
+  MeQuery,
+  MeDocument,
+} from "../generated/graphql";
 
 const Navbar = () => {
-  const { client, data, loading } = useMeQuery();
+  const { data, loading } = useMeQuery();
   const [logout] = useLogoutMutation();
 
   let rightSide = null;
 
   const onLogout = async () => {
-    await logout();
-    await client.resetStore();
+    await logout({
+      update(cache) {
+        cache.writeQuery<MeQuery>({
+          query: MeDocument,
+          data: {
+            me: null,
+          },
+        });
+        cache.evict({ fieldName: "posts" });
+      },
+    });
   };
 
   if (!loading) {
