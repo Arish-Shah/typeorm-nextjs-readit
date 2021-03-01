@@ -1,7 +1,3 @@
-# typeorm-react-graphql-readit
+# readit
 
-### Tasks Remaining
-
-- Paginate Posts
-- Add cache handling -> frontend + redirect + make hook for auth
-- Try react query...?
+Reddit clone build with React & GraphQL
