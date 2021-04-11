@@ -2,12 +2,14 @@ import { makeSchema } from "nexus";
 import path from "path";
 
 import * as userTypes from "./types/user";
+import * as subTypes from "./types/sub";
 import * as inputTypes from "./types/input";
 import * as scalarTypes from "./types/scalar";
 
 export const schema = makeSchema({
   types: {
     userTypes,
+    subTypes,
     inputTypes,
     scalarTypes,
   },

@@ -6,6 +6,8 @@
 scalar Date
 
 type Mutation {
+  createSub(input: SubInput!): Sub!
+  joinOrLeave(subName: String!): Boolean!
   login(password: String!, usernameOrEmail: String!): User!
   logout: Boolean!
   register(input: RegisterInput!): User!
@@ -13,12 +15,30 @@ type Mutation {
 
 type Query {
   me: User!
+  sub(name: String!): Sub!
 }
 
 input RegisterInput {
   email: String!
   password: String!
   username: String!
+}
+
+type Sub {
+  banner: String
+  description: String
+  image: String
+  members: Int!
+  name: ID!
+  title: String
+}
+
+input SubInput {
+  banner: String
+  description: String
+  image: String
+  name: ID!
+  title: String
 }
 
 type User {

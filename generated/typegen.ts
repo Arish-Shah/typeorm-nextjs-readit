@@ -34,6 +34,13 @@ export interface NexusGenInputs {
     password: string; // String!
     username: string; // String!
   }
+  SubInput: { // input type
+    banner?: string | null; // String
+    description?: string | null; // String
+    image?: string | null; // String
+    name: string; // ID!
+    title?: string | null; // String
+  }
 }
 
 export interface NexusGenEnums {
@@ -51,6 +58,13 @@ export interface NexusGenScalars {
 export interface NexusGenObjects {
   Mutation: {};
   Query: {};
+  Sub: { // root type
+    banner?: string | null; // String
+    description?: string | null; // String
+    image?: string | null; // String
+    name: string; // ID!
+    title?: string | null; // String
+  }
   User: { // root type
     createdAt: NexusGenScalars['Date']; // Date!
     email: string; // String!
@@ -71,12 +85,23 @@ export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars
 
 export interface NexusGenFieldTypes {
   Mutation: { // field return type
+    createSub: NexusGenRootTypes['Sub']; // Sub!
+    joinOrLeave: boolean; // Boolean!
     login: NexusGenRootTypes['User']; // User!
     logout: boolean; // Boolean!
     register: NexusGenRootTypes['User']; // User!
   }
   Query: { // field return type
     me: NexusGenRootTypes['User']; // User!
+    sub: NexusGenRootTypes['Sub']; // Sub!
+  }
+  Sub: { // field return type
+    banner: string | null; // String
+    description: string | null; // String
+    image: string | null; // String
+    members: number; // Int!
+    name: string; // ID!
+    title: string | null; // String
   }
   User: { // field return type
     createdAt: NexusGenScalars['Date']; // Date!
@@ -88,12 +113,23 @@ export interface NexusGenFieldTypes {
 
 export interface NexusGenFieldTypeNames {
   Mutation: { // field return type name
+    createSub: 'Sub'
+    joinOrLeave: 'Boolean'
     login: 'User'
     logout: 'Boolean'
     register: 'User'
   }
   Query: { // field return type name
     me: 'User'
+    sub: 'Sub'
+  }
+  Sub: { // field return type name
+    banner: 'String'
+    description: 'String'
+    image: 'String'
+    members: 'Int'
+    name: 'ID'
+    title: 'String'
   }
   User: { // field return type name
     createdAt: 'Date'
@@ -105,12 +141,23 @@ export interface NexusGenFieldTypeNames {
 
 export interface NexusGenArgTypes {
   Mutation: {
+    createSub: { // args
+      input: NexusGenInputs['SubInput']; // SubInput!
+    }
+    joinOrLeave: { // args
+      subName: string; // String!
+    }
     login: { // args
       password: string; // String!
       usernameOrEmail: string; // String!
     }
     register: { // args
       input: NexusGenInputs['RegisterInput']; // RegisterInput!
+    }
+  }
+  Query: {
+    sub: { // args
+      name: string; // String!
     }
   }
 }

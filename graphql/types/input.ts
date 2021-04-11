@@ -8,3 +8,14 @@ export const RegisterInput = inputObjectType({
     t.string("password");
   },
 });
+
+export const SubInput = inputObjectType({
+  name: "SubInput",
+  definition(t) {
+    t.id("name");
+    t.nullable.string("title");
+    t.nullable.string("description");
+    t.nullable.string("image");
+    t.nullable.string("banner");
+  },
+});

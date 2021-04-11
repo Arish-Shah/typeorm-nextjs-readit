@@ -12,7 +12,46 @@ model User {
   email     String @unique
   username  String @unique
   password  String
+  subs      UserSub[]
+  posts     Post[]
   createdAt DateTime @default(now()) @map("created_at")
 
   @@map("users")
+}
+
+model Sub {
+  name        String @id
+  title       String?
+  description String?
+  image       String?
+  banner      String?
+  members     UserSub[]
+  posts       Post[]
+
+  @@map("subs")
+}
+
+model Post {
+  id        String @id @default(cuid())
+  title     String
+  body      String
+  image     String?
+  creator   User @relation(fields: [creatorId], references: [id])
+  creatorId String @map("creator_id")
+  sub       Sub @relation(fields: [subName], references: [name])
+  subName   String @map("sub_name")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  @@map("posts")
+}
+
+model UserSub {
+  user    User @relation(fields: [userId], references: [id])
+  userId  String @map("user_id")
+  sub     Sub @relation(fields: [subName], references: [name])
+  subName String @map("sub_name")
+
+  @@id([userId, subName])
+  @@map("user_subs")
 }
