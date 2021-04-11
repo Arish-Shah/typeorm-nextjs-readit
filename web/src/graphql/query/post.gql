@@ -1,6 +1,0 @@
-query Post($postID: ID!) {
-  post(postID: $postID) {
-    ...RegularPost
-    body
-  }
-}

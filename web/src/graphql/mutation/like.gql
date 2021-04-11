@@ -1,3 +1,0 @@
-mutation Like($postID: ID!) {
-  like(postID: $postID)
-}
