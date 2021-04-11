@@ -1,8 +1,10 @@
 import { ApolloError } from "apollo-server-micro";
 import { extendType, objectType, stringArg } from "nexus";
 
+import { getPaginationData } from "@lib/pagination";
 import { getSession } from "@lib/auth";
-import { SubInput } from "./input";
+import { PaginatedPosts } from "./page";
+import { PaginationInput, SubInput } from "./input";
 
 export const Sub = objectType({
   name: "Sub",
@@ -20,6 +22,27 @@ export const Sub = objectType({
             subName: parent.name,
           },
         });
+      },
+    });
+
+    t.field("posts", {
+      type: PaginatedPosts,
+      args: {
+        input: PaginationInput,
+      },
+      resolve: async (parent, { input }, { prisma }) => {
+        const paginationData = getPaginationData(input);
+
+        const posts = await prisma.post.findMany({
+          where: { subName: parent.name },
+          orderBy: { createdAt: "desc" },
+          ...paginationData,
+        });
+
+        return {
+          hasMore: posts.length === input.take + 1,
+          posts: posts.slice(0, input.take),
+        };
       },
     });
   },

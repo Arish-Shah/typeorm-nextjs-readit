@@ -3,15 +3,19 @@ import path from "path";
 
 import * as userTypes from "./types/user";
 import * as subTypes from "./types/sub";
+import * as postTypes from "./types/post";
 import * as inputTypes from "./types/input";
 import * as scalarTypes from "./types/scalar";
+import * as pageTypes from "./types/page";
 
 export const schema = makeSchema({
   types: {
     userTypes,
     subTypes,
+    postTypes,
     inputTypes,
     scalarTypes,
+    pageTypes,
   },
   nonNullDefaults: {
     input: true,

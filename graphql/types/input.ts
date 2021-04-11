@@ -19,3 +19,20 @@ export const SubInput = inputObjectType({
     t.nullable.string("banner");
   },
 });
+
+export const PostInput = inputObjectType({
+  name: "PostInput",
+  definition(t) {
+    t.string("title");
+    t.string("body");
+    t.nullable.string("image");
+  },
+});
+
+export const PaginationInput = inputObjectType({
+  name: "PaginationInput",
+  definition(t) {
+    t.int("take");
+    t.nullable.id("cursor");
+  },
+});

@@ -4,6 +4,12 @@ interface RegisterInput {
   username: string;
 }
 
+interface PostInput {
+  title: string;
+  body: string;
+  image?: string | null;
+}
+
 export const validateRegister = (input: RegisterInput) => {
   const emailRegex = /^([a-zA-Z0-9_\.\-])+\@(([a-zA-Z0-9\-])+\.)+([a-zA-Z0-9]{2,4})+$/;
   const usernameRegex = /[a-zA-Z0-9]{3,12}/;
@@ -18,5 +24,11 @@ export const validateRegister = (input: RegisterInput) => {
 
   if (input.password.length < 4) {
     return "password must be at least 8 characters";
+  }
+};
+
+export const validatePost = (input: PostInput) => {
+  if (input.title.length === 0) {
+    return "title cannot be empty";
   }
 };

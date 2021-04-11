@@ -6,11 +6,43 @@
 scalar Date
 
 type Mutation {
+  createPost(input: PostInput!, subName: String!): Post!
   createSub(input: SubInput!): Sub!
+  deletePost(postId: ID!): Boolean!
   joinOrLeave(subName: String!): Boolean!
   login(password: String!, usernameOrEmail: String!): User!
   logout: Boolean!
   register(input: RegisterInput!): User!
+  updatePost(input: PostInput!, postId: ID!): Post!
+}
+
+type PaginatedPosts {
+  hasMore: Boolean!
+  posts: [Post!]!
+}
+
+input PaginationInput {
+  cursor: ID
+  take: Int!
+}
+
+type Post {
+  body: String!
+  createdAt: Date!
+  creator: User!
+  creatorId: String!
+  id: ID!
+  image: String
+  sub: Sub!
+  subName: String!
+  title: String!
+  updatedAt: Date!
+}
+
+input PostInput {
+  body: String!
+  image: String
+  title: String!
 }
 
 type Query {
@@ -30,6 +62,7 @@ type Sub {
   image: String
   members: Int!
   name: ID!
+  posts(input: PaginationInput!): PaginatedPosts!
   title: String
 }
 
@@ -45,5 +78,6 @@ type User {
   createdAt: Date!
   email: String!
   id: ID!
+  posts(input: PaginationInput!): PaginatedPosts!
   username: String!
 }

@@ -29,6 +29,15 @@ declare global {
 }
 
 export interface NexusGenInputs {
+  PaginationInput: { // input type
+    cursor?: string | null; // ID
+    take: number; // Int!
+  }
+  PostInput: { // input type
+    body: string; // String!
+    image?: string | null; // String
+    title: string; // String!
+  }
   RegisterInput: { // input type
     email: string; // String!
     password: string; // String!
@@ -57,6 +66,20 @@ export interface NexusGenScalars {
 
 export interface NexusGenObjects {
   Mutation: {};
+  PaginatedPosts: { // root type
+    hasMore: boolean; // Boolean!
+    posts: NexusGenRootTypes['Post'][]; // [Post!]!
+  }
+  Post: { // root type
+    body: string; // String!
+    createdAt: NexusGenScalars['Date']; // Date!
+    creatorId: string; // String!
+    id: string; // ID!
+    image?: string | null; // String
+    subName: string; // String!
+    title: string; // String!
+    updatedAt: NexusGenScalars['Date']; // Date!
+  }
   Query: {};
   Sub: { // root type
     banner?: string | null; // String
@@ -85,11 +108,30 @@ export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars
 
 export interface NexusGenFieldTypes {
   Mutation: { // field return type
+    createPost: NexusGenRootTypes['Post']; // Post!
     createSub: NexusGenRootTypes['Sub']; // Sub!
+    deletePost: boolean; // Boolean!
     joinOrLeave: boolean; // Boolean!
     login: NexusGenRootTypes['User']; // User!
     logout: boolean; // Boolean!
     register: NexusGenRootTypes['User']; // User!
+    updatePost: NexusGenRootTypes['Post']; // Post!
+  }
+  PaginatedPosts: { // field return type
+    hasMore: boolean; // Boolean!
+    posts: NexusGenRootTypes['Post'][]; // [Post!]!
+  }
+  Post: { // field return type
+    body: string; // String!
+    createdAt: NexusGenScalars['Date']; // Date!
+    creator: NexusGenRootTypes['User']; // User!
+    creatorId: string; // String!
+    id: string; // ID!
+    image: string | null; // String
+    sub: NexusGenRootTypes['Sub']; // Sub!
+    subName: string; // String!
+    title: string; // String!
+    updatedAt: NexusGenScalars['Date']; // Date!
   }
   Query: { // field return type
     me: NexusGenRootTypes['User']; // User!
@@ -101,23 +143,44 @@ export interface NexusGenFieldTypes {
     image: string | null; // String
     members: number; // Int!
     name: string; // ID!
+    posts: NexusGenRootTypes['PaginatedPosts']; // PaginatedPosts!
     title: string | null; // String
   }
   User: { // field return type
     createdAt: NexusGenScalars['Date']; // Date!
     email: string; // String!
     id: string; // ID!
+    posts: NexusGenRootTypes['PaginatedPosts']; // PaginatedPosts!
     username: string; // String!
   }
 }
 
 export interface NexusGenFieldTypeNames {
   Mutation: { // field return type name
+    createPost: 'Post'
     createSub: 'Sub'
+    deletePost: 'Boolean'
     joinOrLeave: 'Boolean'
     login: 'User'
     logout: 'Boolean'
     register: 'User'
+    updatePost: 'Post'
+  }
+  PaginatedPosts: { // field return type name
+    hasMore: 'Boolean'
+    posts: 'Post'
+  }
+  Post: { // field return type name
+    body: 'String'
+    createdAt: 'Date'
+    creator: 'User'
+    creatorId: 'String'
+    id: 'ID'
+    image: 'String'
+    sub: 'Sub'
+    subName: 'String'
+    title: 'String'
+    updatedAt: 'Date'
   }
   Query: { // field return type name
     me: 'User'
@@ -129,20 +192,29 @@ export interface NexusGenFieldTypeNames {
     image: 'String'
     members: 'Int'
     name: 'ID'
+    posts: 'PaginatedPosts'
     title: 'String'
   }
   User: { // field return type name
     createdAt: 'Date'
     email: 'String'
     id: 'ID'
+    posts: 'PaginatedPosts'
     username: 'String'
   }
 }
 
 export interface NexusGenArgTypes {
   Mutation: {
+    createPost: { // args
+      input: NexusGenInputs['PostInput']; // PostInput!
+      subName: string; // String!
+    }
     createSub: { // args
       input: NexusGenInputs['SubInput']; // SubInput!
+    }
+    deletePost: { // args
+      postId: string; // ID!
     }
     joinOrLeave: { // args
       subName: string; // String!
@@ -154,10 +226,24 @@ export interface NexusGenArgTypes {
     register: { // args
       input: NexusGenInputs['RegisterInput']; // RegisterInput!
     }
+    updatePost: { // args
+      input: NexusGenInputs['PostInput']; // PostInput!
+      postId: string; // ID!
+    }
   }
   Query: {
     sub: { // args
       name: string; // String!
+    }
+  }
+  Sub: {
+    posts: { // args
+      input: NexusGenInputs['PaginationInput']; // PaginationInput!
+    }
+  }
+  User: {
+    posts: { // args
+      input: NexusGenInputs['PaginationInput']; // PaginationInput!
     }
   }
 }

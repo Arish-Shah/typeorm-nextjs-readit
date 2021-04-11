@@ -1,11 +1,13 @@
-import { ApolloError } from "apollo-server-micro";
+import { ApolloError, UserInputError } from "apollo-server-micro";
 import { extendType, objectType, stringArg } from "nexus";
 import bcrypt from "bcryptjs";
 
 import { removeTokenCookie } from "@lib/auth-cookies";
 import { getSession, setSession } from "@lib/auth";
 import { validateRegister } from "@lib/validate";
-import { RegisterInput } from "./input";
+import { getPaginationData } from "@lib/pagination";
+import { PaginatedPosts } from "./page";
+import { PaginationInput, RegisterInput } from "./input";
 
 export const User = objectType({
   name: "User",
@@ -14,6 +16,27 @@ export const User = objectType({
     t.string("email");
     t.string("username");
     t.date("createdAt");
+
+    t.field("posts", {
+      type: PaginatedPosts,
+      args: {
+        input: PaginationInput,
+      },
+      resolve: async (parent, { input }, { prisma }) => {
+        const pagination = getPaginationData(input);
+
+        const posts = await prisma.post.findMany({
+          where: { creatorId: parent.id },
+          orderBy: { createdAt: "desc" },
+          ...pagination,
+        });
+
+        return {
+          hasMore: posts.length === input.take + 1,
+          posts: posts.slice(0, input.take),
+        };
+      },
+    });
   },
 });
 
@@ -43,7 +66,7 @@ export const Mutation = extendType({
       resolve: async (_, { input }, { prisma, res }) => {
         const error = validateRegister(input);
         if (error) {
-          throw new ApolloError(error);
+          throw new UserInputError(error);
         }
 
         const password = await bcrypt.hash(input.password, 10);
