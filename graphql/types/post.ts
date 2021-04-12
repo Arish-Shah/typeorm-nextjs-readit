@@ -1,11 +1,13 @@
 import { ApolloError, UserInputError } from "apollo-server-micro";
 import { extendType, idArg, objectType, stringArg } from "nexus";
 
+import { getPaginationData } from "@lib/pagination";
 import { validatePost } from "@lib/validate";
 import { getSession } from "@lib/auth";
 import { User } from "./user";
 import { Sub } from "./sub";
-import { PostInput } from "./input";
+import { PaginationInput, PostInput } from "./input";
+import { PaginatedComments } from "./page";
 
 export const Post = objectType({
   name: "Post",
@@ -29,6 +31,27 @@ export const Post = objectType({
       type: Sub,
       resolve: (parent, _, { prisma }) =>
         prisma.sub.findUnique({ where: { name: parent.subName } }),
+    });
+
+    t.field("comments", {
+      type: PaginatedComments,
+      args: {
+        input: PaginationInput,
+      },
+      resolve: async (parent, { input }, { prisma }) => {
+        const pagination = getPaginationData(input);
+
+        const comments = await prisma.comment.findMany({
+          where: { postId: parent.id },
+          orderBy: { createdAt: "desc" },
+          ...pagination,
+        });
+
+        return {
+          hasMore: comments.length === input.take + 1,
+          comments: comments.slice(0, input.take),
+        };
+      },
     });
   },
 });
@@ -65,7 +88,7 @@ export const Mutation = extendType({
       },
     });
 
-    t.field("updatePost", {
+    t.field("editPost", {
       type: Post,
       args: {
         postId: idArg(),
@@ -86,7 +109,7 @@ export const Mutation = extendType({
 
         const post = await prisma.post.update({
           where: { id: postId },
-          data: { ...input, updatedAt: new Date().toISOString() },
+          data: { ...input, updatedAt: new Date() },
         });
 
         return post;
@@ -113,6 +136,20 @@ export const Mutation = extendType({
         await prisma.post.delete({ where: { id: postId } });
         return true;
       },
+    });
+  },
+});
+
+export const Query = extendType({
+  type: "Query",
+  definition(t) {
+    t.field("post", {
+      type: Post,
+      args: {
+        id: idArg(),
+      },
+      resolve: (_, { id }, { prisma }) =>
+        prisma.post.findUnique({ where: { id } }),
     });
   },
 });

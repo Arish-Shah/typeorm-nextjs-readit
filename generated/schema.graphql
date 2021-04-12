@@ -2,18 +2,37 @@
 ### Do not make changes to this file directly
 
 
+type Comment {
+  createdAt: Date!
+  creator: User!
+  creatorId: String!
+  id: ID!
+  post: Post!
+  postId: String!
+  text: String!
+  updatedAt: Date!
+}
+
 """Date custom scalar type"""
 scalar Date
 
 type Mutation {
+  createComment(postId: ID!, text: String!): Comment!
   createPost(input: PostInput!, subName: String!): Post!
   createSub(input: SubInput!): Sub!
+  deleteComment(commentId: ID!): Boolean!
   deletePost(postId: ID!): Boolean!
+  editComment(commentId: ID!, text: String!): Comment!
+  editPost(input: PostInput!, postId: ID!): Post!
   joinOrLeave(subName: String!): Boolean!
   login(password: String!, usernameOrEmail: String!): User!
   logout: Boolean!
   register(input: RegisterInput!): User!
-  updatePost(input: PostInput!, postId: ID!): Post!
+}
+
+type PaginatedComments {
+  comments: [Comment!]!
+  hasMore: Boolean!
 }
 
 type PaginatedPosts {
@@ -28,6 +47,7 @@ input PaginationInput {
 
 type Post {
   body: String!
+  comments(input: PaginationInput!): PaginatedComments!
   createdAt: Date!
   creator: User!
   creatorId: String!
@@ -47,6 +67,7 @@ input PostInput {
 
 type Query {
   me: User!
+  post(id: ID!): Post!
   sub(name: String!): Sub!
 }
 
@@ -75,6 +96,7 @@ input SubInput {
 }
 
 type User {
+  comments(input: PaginationInput!): PaginatedComments!
   createdAt: Date!
   email: String!
   id: ID!

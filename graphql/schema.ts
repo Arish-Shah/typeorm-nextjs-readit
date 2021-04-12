@@ -4,6 +4,7 @@ import path from "path";
 import * as userTypes from "./types/user";
 import * as subTypes from "./types/sub";
 import * as postTypes from "./types/post";
+import * as commentTypes from "./types/comment";
 import * as inputTypes from "./types/input";
 import * as scalarTypes from "./types/scalar";
 import * as pageTypes from "./types/page";
@@ -13,6 +14,7 @@ export const schema = makeSchema({
     userTypes,
     subTypes,
     postTypes,
+    commentTypes,
     inputTypes,
     scalarTypes,
     pageTypes,

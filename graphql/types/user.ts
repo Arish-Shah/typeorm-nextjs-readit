@@ -6,7 +6,7 @@ import { removeTokenCookie } from "@lib/auth-cookies";
 import { getSession, setSession } from "@lib/auth";
 import { validateRegister } from "@lib/validate";
 import { getPaginationData } from "@lib/pagination";
-import { PaginatedPosts } from "./page";
+import { PaginatedComments, PaginatedPosts } from "./page";
 import { PaginationInput, RegisterInput } from "./input";
 
 export const User = objectType({
@@ -34,6 +34,27 @@ export const User = objectType({
         return {
           hasMore: posts.length === input.take + 1,
           posts: posts.slice(0, input.take),
+        };
+      },
+    });
+
+    t.field("comments", {
+      type: PaginatedComments,
+      args: {
+        input: PaginationInput,
+      },
+      resolve: async (parent, { input }, { prisma }) => {
+        const pagination = getPaginationData(input);
+
+        const comments = await prisma.comment.findMany({
+          where: { creatorId: parent.id },
+          orderBy: { createdAt: "desc" },
+          ...pagination,
+        });
+
+        return {
+          hasMore: comments.length === input.take + 1,
+          comments: comments.slice(0, input.take),
         };
       },
     });

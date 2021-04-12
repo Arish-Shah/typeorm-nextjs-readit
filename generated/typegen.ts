@@ -65,7 +65,19 @@ export interface NexusGenScalars {
 }
 
 export interface NexusGenObjects {
+  Comment: { // root type
+    createdAt: NexusGenScalars['Date']; // Date!
+    creatorId: string; // String!
+    id: string; // ID!
+    postId: string; // String!
+    text: string; // String!
+    updatedAt: NexusGenScalars['Date']; // Date!
+  }
   Mutation: {};
+  PaginatedComments: { // root type
+    comments: NexusGenRootTypes['Comment'][]; // [Comment!]!
+    hasMore: boolean; // Boolean!
+  }
   PaginatedPosts: { // root type
     hasMore: boolean; // Boolean!
     posts: NexusGenRootTypes['Post'][]; // [Post!]!
@@ -107,15 +119,32 @@ export type NexusGenRootTypes = NexusGenObjects
 export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars
 
 export interface NexusGenFieldTypes {
+  Comment: { // field return type
+    createdAt: NexusGenScalars['Date']; // Date!
+    creator: NexusGenRootTypes['User']; // User!
+    creatorId: string; // String!
+    id: string; // ID!
+    post: NexusGenRootTypes['Post']; // Post!
+    postId: string; // String!
+    text: string; // String!
+    updatedAt: NexusGenScalars['Date']; // Date!
+  }
   Mutation: { // field return type
+    createComment: NexusGenRootTypes['Comment']; // Comment!
     createPost: NexusGenRootTypes['Post']; // Post!
     createSub: NexusGenRootTypes['Sub']; // Sub!
+    deleteComment: boolean; // Boolean!
     deletePost: boolean; // Boolean!
+    editComment: NexusGenRootTypes['Comment']; // Comment!
+    editPost: NexusGenRootTypes['Post']; // Post!
     joinOrLeave: boolean; // Boolean!
     login: NexusGenRootTypes['User']; // User!
     logout: boolean; // Boolean!
     register: NexusGenRootTypes['User']; // User!
-    updatePost: NexusGenRootTypes['Post']; // Post!
+  }
+  PaginatedComments: { // field return type
+    comments: NexusGenRootTypes['Comment'][]; // [Comment!]!
+    hasMore: boolean; // Boolean!
   }
   PaginatedPosts: { // field return type
     hasMore: boolean; // Boolean!
@@ -123,6 +152,7 @@ export interface NexusGenFieldTypes {
   }
   Post: { // field return type
     body: string; // String!
+    comments: NexusGenRootTypes['PaginatedComments']; // PaginatedComments!
     createdAt: NexusGenScalars['Date']; // Date!
     creator: NexusGenRootTypes['User']; // User!
     creatorId: string; // String!
@@ -135,6 +165,7 @@ export interface NexusGenFieldTypes {
   }
   Query: { // field return type
     me: NexusGenRootTypes['User']; // User!
+    post: NexusGenRootTypes['Post']; // Post!
     sub: NexusGenRootTypes['Sub']; // Sub!
   }
   Sub: { // field return type
@@ -147,6 +178,7 @@ export interface NexusGenFieldTypes {
     title: string | null; // String
   }
   User: { // field return type
+    comments: NexusGenRootTypes['PaginatedComments']; // PaginatedComments!
     createdAt: NexusGenScalars['Date']; // Date!
     email: string; // String!
     id: string; // ID!
@@ -156,15 +188,32 @@ export interface NexusGenFieldTypes {
 }
 
 export interface NexusGenFieldTypeNames {
+  Comment: { // field return type name
+    createdAt: 'Date'
+    creator: 'User'
+    creatorId: 'String'
+    id: 'ID'
+    post: 'Post'
+    postId: 'String'
+    text: 'String'
+    updatedAt: 'Date'
+  }
   Mutation: { // field return type name
+    createComment: 'Comment'
     createPost: 'Post'
     createSub: 'Sub'
+    deleteComment: 'Boolean'
     deletePost: 'Boolean'
+    editComment: 'Comment'
+    editPost: 'Post'
     joinOrLeave: 'Boolean'
     login: 'User'
     logout: 'Boolean'
     register: 'User'
-    updatePost: 'Post'
+  }
+  PaginatedComments: { // field return type name
+    comments: 'Comment'
+    hasMore: 'Boolean'
   }
   PaginatedPosts: { // field return type name
     hasMore: 'Boolean'
@@ -172,6 +221,7 @@ export interface NexusGenFieldTypeNames {
   }
   Post: { // field return type name
     body: 'String'
+    comments: 'PaginatedComments'
     createdAt: 'Date'
     creator: 'User'
     creatorId: 'String'
@@ -184,6 +234,7 @@ export interface NexusGenFieldTypeNames {
   }
   Query: { // field return type name
     me: 'User'
+    post: 'Post'
     sub: 'Sub'
   }
   Sub: { // field return type name
@@ -196,6 +247,7 @@ export interface NexusGenFieldTypeNames {
     title: 'String'
   }
   User: { // field return type name
+    comments: 'PaginatedComments'
     createdAt: 'Date'
     email: 'String'
     id: 'ID'
@@ -206,6 +258,10 @@ export interface NexusGenFieldTypeNames {
 
 export interface NexusGenArgTypes {
   Mutation: {
+    createComment: { // args
+      postId: string; // ID!
+      text: string; // String!
+    }
     createPost: { // args
       input: NexusGenInputs['PostInput']; // PostInput!
       subName: string; // String!
@@ -213,7 +269,18 @@ export interface NexusGenArgTypes {
     createSub: { // args
       input: NexusGenInputs['SubInput']; // SubInput!
     }
+    deleteComment: { // args
+      commentId: string; // ID!
+    }
     deletePost: { // args
+      postId: string; // ID!
+    }
+    editComment: { // args
+      commentId: string; // ID!
+      text: string; // String!
+    }
+    editPost: { // args
+      input: NexusGenInputs['PostInput']; // PostInput!
       postId: string; // ID!
     }
     joinOrLeave: { // args
@@ -226,12 +293,16 @@ export interface NexusGenArgTypes {
     register: { // args
       input: NexusGenInputs['RegisterInput']; // RegisterInput!
     }
-    updatePost: { // args
-      input: NexusGenInputs['PostInput']; // PostInput!
-      postId: string; // ID!
+  }
+  Post: {
+    comments: { // args
+      input: NexusGenInputs['PaginationInput']; // PaginationInput!
     }
   }
   Query: {
+    post: { // args
+      id: string; // ID!
+    }
     sub: { // args
       name: string; // String!
     }
@@ -242,6 +313,9 @@ export interface NexusGenArgTypes {
     }
   }
   User: {
+    comments: { // args
+      input: NexusGenInputs['PaginationInput']; // PaginationInput!
+    }
     posts: { // args
       input: NexusGenInputs['PaginationInput']; // PaginationInput!
     }
