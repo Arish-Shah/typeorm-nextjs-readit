@@ -26,6 +26,37 @@ export const Comment = objectType({
       resolve: (parent, _, { prisma }) =>
         prisma.post.findUnique({ where: { id: parent.postId } }),
     });
+
+    t.int("votes", {
+      resolve: async (parent, _, { prisma }) => {
+        const voteArr = await prisma.commentVote.findMany({
+          where: { commentId: parent.id },
+          select: { value: true },
+        });
+        return voteArr.reduce((prev, curr) => prev + curr.value, 0);
+      },
+    });
+
+    t.int("voteStatus", {
+      resolve: async (parent, _, { req, prisma }) => {
+        const session = getSession(req);
+
+        if (!session?.userId) return 0;
+
+        const vote = await prisma.commentVote.findUnique({
+          where: {
+            userId_commentId: { userId: session.userId, commentId: parent.id },
+          },
+          select: { value: true },
+        });
+
+        if (!vote) {
+          return 0;
+        }
+
+        return vote.value;
+      },
+    });
   },
 });
 

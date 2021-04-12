@@ -7,7 +7,8 @@ import { getSession } from "@lib/auth";
 import { User } from "./user";
 import { Sub } from "./sub";
 import { PaginationInput, PostInput } from "./input";
-import { PaginatedComments } from "./page";
+import { PaginatedComments, PaginatedPosts } from "./page";
+import { Post as PostType } from ".prisma/client";
 
 export const Post = objectType({
   name: "Post",
@@ -33,6 +34,16 @@ export const Post = objectType({
         prisma.sub.findUnique({ where: { name: parent.subName } }),
     });
 
+    t.int("votes", {
+      resolve: async (parent, _, { prisma }) => {
+        const voteArr = await prisma.postVote.findMany({
+          where: { postId: parent.id },
+          select: { value: true },
+        });
+        return voteArr.reduce((prev, curr) => prev + curr.value, 0);
+      },
+    });
+
     t.field("comments", {
       type: PaginatedComments,
       args: {
@@ -51,6 +62,27 @@ export const Post = objectType({
           hasMore: comments.length === input.take + 1,
           comments: comments.slice(0, input.take),
         };
+      },
+    });
+
+    t.int("voteStatus", {
+      resolve: async (parent, _, { req, prisma }) => {
+        const session = getSession(req);
+
+        if (!session?.userId) return 0;
+
+        const vote = await prisma.postVote.findUnique({
+          where: {
+            userId_postId: { userId: session.userId, postId: parent.id },
+          },
+          select: { value: true },
+        });
+
+        if (!vote) {
+          return 0;
+        }
+
+        return vote.value;
       },
     });
   },
@@ -150,6 +182,42 @@ export const Query = extendType({
       },
       resolve: (_, { id }, { prisma }) =>
         prisma.post.findUnique({ where: { id } }),
+    });
+
+    t.field("feed", {
+      type: PaginatedPosts,
+      args: {
+        input: PaginationInput,
+      },
+      resolve: async (_, { input }, { req, prisma }) => {
+        const session = getSession(req);
+        const pagination = getPaginationData(input);
+
+        let posts: PostType[];
+
+        if (session?.userId) {
+          const subs = await prisma.userSub.findMany({
+            where: { userId: session.userId },
+            select: { subName: true },
+          });
+          const subNames = subs.map((s) => s.subName);
+          posts = await prisma.post.findMany({
+            where: { subName: { in: subNames } },
+            orderBy: { createdAt: "desc" },
+            ...pagination,
+          });
+        } else {
+          posts = await prisma.post.findMany({
+            orderBy: { createdAt: "desc" },
+            ...pagination,
+          });
+        }
+
+        return {
+          hasMore: posts.length === input.take + 1,
+          posts: posts.slice(0, input.take),
+        };
+      },
     });
   },
 });

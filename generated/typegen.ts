@@ -128,6 +128,8 @@ export interface NexusGenFieldTypes {
     postId: string; // String!
     text: string; // String!
     updatedAt: NexusGenScalars['Date']; // Date!
+    voteStatus: number; // Int!
+    votes: number; // Int!
   }
   Mutation: { // field return type
     createComment: NexusGenRootTypes['Comment']; // Comment!
@@ -141,6 +143,8 @@ export interface NexusGenFieldTypes {
     login: NexusGenRootTypes['User']; // User!
     logout: boolean; // Boolean!
     register: NexusGenRootTypes['User']; // User!
+    voteComment: boolean; // Boolean!
+    votePost: boolean; // Boolean!
   }
   PaginatedComments: { // field return type
     comments: NexusGenRootTypes['Comment'][]; // [Comment!]!
@@ -162,8 +166,11 @@ export interface NexusGenFieldTypes {
     subName: string; // String!
     title: string; // String!
     updatedAt: NexusGenScalars['Date']; // Date!
+    voteStatus: number; // Int!
+    votes: number; // Int!
   }
   Query: { // field return type
+    feed: NexusGenRootTypes['PaginatedPosts']; // PaginatedPosts!
     me: NexusGenRootTypes['User']; // User!
     post: NexusGenRootTypes['Post']; // Post!
     sub: NexusGenRootTypes['Sub']; // Sub!
@@ -197,6 +204,8 @@ export interface NexusGenFieldTypeNames {
     postId: 'String'
     text: 'String'
     updatedAt: 'Date'
+    voteStatus: 'Int'
+    votes: 'Int'
   }
   Mutation: { // field return type name
     createComment: 'Comment'
@@ -210,6 +219,8 @@ export interface NexusGenFieldTypeNames {
     login: 'User'
     logout: 'Boolean'
     register: 'User'
+    voteComment: 'Boolean'
+    votePost: 'Boolean'
   }
   PaginatedComments: { // field return type name
     comments: 'Comment'
@@ -231,8 +242,11 @@ export interface NexusGenFieldTypeNames {
     subName: 'String'
     title: 'String'
     updatedAt: 'Date'
+    voteStatus: 'Int'
+    votes: 'Int'
   }
   Query: { // field return type name
+    feed: 'PaginatedPosts'
     me: 'User'
     post: 'Post'
     sub: 'Sub'
@@ -293,6 +307,14 @@ export interface NexusGenArgTypes {
     register: { // args
       input: NexusGenInputs['RegisterInput']; // RegisterInput!
     }
+    voteComment: { // args
+      commentId: string; // ID!
+      value: number; // Int!
+    }
+    votePost: { // args
+      postId: string; // ID!
+      value: number; // Int!
+    }
   }
   Post: {
     comments: { // args
@@ -300,6 +322,9 @@ export interface NexusGenArgTypes {
     }
   }
   Query: {
+    feed: { // args
+      input: NexusGenInputs['PaginationInput']; // PaginationInput!
+    }
     post: { // args
       id: string; // ID!
     }

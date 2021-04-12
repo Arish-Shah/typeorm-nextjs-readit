@@ -11,6 +11,8 @@ type Comment {
   postId: String!
   text: String!
   updatedAt: Date!
+  voteStatus: Int!
+  votes: Int!
 }
 
 """Date custom scalar type"""
@@ -28,6 +30,8 @@ type Mutation {
   login(password: String!, usernameOrEmail: String!): User!
   logout: Boolean!
   register(input: RegisterInput!): User!
+  voteComment(commentId: ID!, value: Int!): Boolean!
+  votePost(postId: ID!, value: Int!): Boolean!
 }
 
 type PaginatedComments {
@@ -57,6 +61,8 @@ type Post {
   subName: String!
   title: String!
   updatedAt: Date!
+  voteStatus: Int!
+  votes: Int!
 }
 
 input PostInput {
@@ -66,6 +72,7 @@ input PostInput {
 }
 
 type Query {
+  feed(input: PaginationInput!): PaginatedPosts!
   me: User!
   post(id: ID!): Post!
   sub(name: String!): Sub!
