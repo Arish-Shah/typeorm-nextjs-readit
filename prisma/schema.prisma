@@ -11,14 +11,15 @@ model User {
   id           String @id @default(cuid())
   email        String @unique
   username     String @unique
-  password     String
+  bio          String?
+  image        String?
   subs         UserSub[]
   posts        Post[]
   comments     Comment[]
   postVotes    PostVote[]
   commentVotes CommentVote[]
+  password     String
   createdAt    DateTime @default(now()) @map("created_at")
-
   @@map("users")
 }
 
@@ -30,7 +31,6 @@ model Sub {
   banner      String?
   members     UserSub[]
   posts       Post[]
-
   @@map("subs")
 }
 
@@ -47,7 +47,6 @@ model Post {
   votes     PostVote[]
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
-
   @@map("posts")
 }
 
@@ -56,7 +55,6 @@ model UserSub {
   userId  String @map("user_id")
   sub     Sub @relation(fields: [subName], references: [name])
   subName String @map("sub_name")
-
   @@id([userId, subName])
   @@map("user_subs")
 }
@@ -71,7 +69,6 @@ model Comment {
   votes     CommentVote[]
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
-
   @@map("comments")
 }
 
@@ -81,7 +78,6 @@ model PostVote {
   userId String @map("user_id")
   post   Post @relation(fields: [postId], references: [id])
   postId String @map("post_id")
-
   @@id([userId, postId])
   @@map("post_votes")
 }
@@ -92,7 +88,6 @@ model CommentVote {
   userId    String @map("user_id")
   comment   Comment @relation(fields: [commentId], references: [id])
   commentId String @map("comment_id")
-
   @@id([userId, commentId])
   @@map("comment_votes")
 }

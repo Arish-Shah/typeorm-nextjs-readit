@@ -1,9 +1,8 @@
 overwrite: true
 schema: "http://localhost:3000/api/graphql"
-documents: "graphql/documents/**/*.graphql"
+documents: null
 generates:
-  generated/codegen.tsx:
+  generated/backend.ts:
     plugins:
       - "typescript"
-      - "typescript-operations"
-      - "typescript-react-apollo"
+      - "typescript-resolvers"
