@@ -54,7 +54,7 @@ export type MutationRegisterArgs = {
 
 export type MutationLoginArgs = {
   password: Scalars['String'];
-  usernameOrEmail: Scalars['String'];
+  username: Scalars['String'];
 };
 
 
@@ -216,6 +216,8 @@ export type User = {
   id: Scalars['ID'];
   email: Scalars['String'];
   username: Scalars['String'];
+  bio?: Maybe<Scalars['String']>;
+  image?: Maybe<Scalars['String']>;
   posts: PaginatedPosts;
   comments: PaginatedComments;
   createdAt: Scalars['Date'];
@@ -369,7 +371,7 @@ export interface DateScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   register?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationRegisterArgs, 'input'>>;
-  login?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'password' | 'usernameOrEmail'>>;
+  login?: Resolver<ResolversTypes['User'], ParentType, ContextType, RequireFields<MutationLoginArgs, 'password' | 'username'>>;
   logout?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   joinOrLeave?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType, RequireFields<MutationJoinOrLeaveArgs, 'subName'>>;
   createPost?: Resolver<ResolversTypes['Post'], ParentType, ContextType, RequireFields<MutationCreatePostArgs, 'input' | 'subName'>>;
@@ -434,6 +436,8 @@ export type UserResolvers<ContextType = any, ParentType extends ResolversParentT
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   email?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  bio?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  image?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
   posts?: Resolver<ResolversTypes['PaginatedPosts'], ParentType, ContextType, RequireFields<UserPostsArgs, 'input'>>;
   comments?: Resolver<ResolversTypes['PaginatedComments'], ParentType, ContextType, RequireFields<UserCommentsArgs, 'input'>>;
   createdAt?: Resolver<ResolversTypes['Date'], ParentType, ContextType>;

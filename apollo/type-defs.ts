@@ -10,7 +10,7 @@ export const typeDefs = gql`
 
   type Mutation {
     register(input: RegisterInput!): User!
-    login(password: String!, usernameOrEmail: String!): User!
+    login(password: String!, username: String!): User!
     logout: Boolean!
     joinOrLeave(subName: String!): Boolean!
     createPost(input: PostInput!, subName: String!): Post!
