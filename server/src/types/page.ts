@@ -1,24 +1,22 @@
-import { objectType } from "nexus";
+import { Field, ObjectType } from "type-graphql";
 
-import { Post } from "./post";
-import { Comment } from "./comment";
+import { Post } from "./Post";
+import { Comment } from "./Comment";
 
-export const PaginatedPosts = objectType({
-  name: "PaginatedPosts",
-  definition(t) {
-    t.list.field("posts", {
-      type: Post,
-    });
-    t.boolean("hasMore");
-  },
-});
+@ObjectType()
+export class PaginatedPosts {
+  @Field(() => [Post])
+  posts: Post[];
 
-export const PaginatedComments = objectType({
-  name: "PaginatedComments",
-  definition(t) {
-    t.list.field("comments", {
-      type: Comment,
-    });
-    t.boolean("hasMore");
-  },
-});
+  @Field()
+  hasMore: boolean;
+}
+
+@ObjectType()
+export class PaginatedComments {
+  @Field(() => [Comment])
+  comments: Comment[];
+
+  @Field()
+  hasMore: boolean;
+}

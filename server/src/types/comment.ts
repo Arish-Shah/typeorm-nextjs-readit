@@ -1,132 +1,29 @@
-import { ApolloError } from "apollo-server";
-import { extendType, idArg, objectType, stringArg } from "nexus";
+import { Field, ID, ObjectType } from "type-graphql";
 
-import { getSession } from "../lib/auth";
-import { Post } from "./post";
-import { User } from "./user";
+import { Post } from "./Post";
+import { User } from "./User";
 
-export const Comment = objectType({
-  name: "Comment",
-  definition(t) {
-    t.id("id");
-    t.string("text");
-    t.string("postId");
-    t.string("creatorId");
-    t.date("createdAt");
-    t.date("updatedAt");
+@ObjectType()
+export class Comment {
+  @Field(() => ID)
+  id: string;
 
-    t.field("creator", {
-      type: User,
-      resolve: (parent, _, { prisma }) =>
-        prisma.user.findUnique({ where: { id: parent.creatorId } }),
-    });
+  @Field()
+  text: string;
 
-    t.field("post", {
-      type: Post,
-      resolve: (parent, _, { prisma }) =>
-        prisma.post.findUnique({ where: { id: parent.postId } }),
-    });
+  @Field(() => Post, { nullable: true })
+  post?: Post;
+  @Field(() => ID)
+  postId: string;
 
-    t.int("votes", {
-      resolve: async (parent, _, { prisma }) => {
-        const voteArr = await prisma.commentVote.findMany({
-          where: { commentId: parent.id },
-          select: { value: true },
-        });
-        return voteArr.reduce((prev, curr) => prev + curr.value, 0);
-      },
-    });
+  @Field(() => User, { nullable: true })
+  creator?: User;
+  @Field(() => ID)
+  creatorId: string;
 
-    t.int("voteStatus", {
-      resolve: async (parent, _, { req, prisma }) => {
-        const session = getSession(req);
+  @Field()
+  createdAt: Date;
 
-        if (!session?.userId) return 0;
-
-        const vote = await prisma.commentVote.findUnique({
-          where: {
-            userId_commentId: { userId: session.userId, commentId: parent.id },
-          },
-          select: { value: true },
-        });
-
-        if (!vote) {
-          return 0;
-        }
-
-        return vote.value;
-      },
-    });
-  },
-});
-
-export const Mutation = extendType({
-  type: "Mutation",
-  definition(t) {
-    t.field("createComment", {
-      type: Comment,
-      args: {
-        postId: idArg(),
-        text: stringArg(),
-      },
-      resolve: async (_, { postId, text }, { req, prisma }) => {
-        const { userId } = getSession(req, true);
-        try {
-          const comment = await prisma.comment.create({
-            data: { text, creatorId: userId, postId },
-          });
-          return comment;
-        } catch (e) {
-          throw new ApolloError("post not found");
-        }
-      },
-    });
-
-    t.field("editComment", {
-      type: Comment,
-      args: {
-        commentId: idArg(),
-        text: stringArg(),
-      },
-      resolve: async (_, { commentId, text }, { req, prisma }) => {
-        const { userId } = getSession(req, true);
-
-        const comment = await prisma.comment.findUnique({
-          where: { id: commentId },
-        });
-
-        if (!comment) throw new ApolloError("comment not found");
-        if (comment.creatorId !== userId)
-          throw new ApolloError("cannot update");
-
-        return prisma.comment.update({
-          where: { id: commentId },
-          data: {
-            text,
-            updatedAt: new Date(),
-          },
-        });
-      },
-    });
-
-    t.boolean("deleteComment", {
-      args: {
-        commentId: idArg(),
-      },
-      resolve: async (_, { commentId }, { req, prisma }) => {
-        const { userId } = getSession(req, true);
-
-        const comment = await prisma.comment.findUnique({
-          where: { id: commentId },
-        });
-
-        if (!comment) throw new ApolloError("comment not found");
-        if (comment.creatorId !== userId)
-          throw new ApolloError("cannot update");
-
-        await prisma.comment.delete({ where: { id: commentId } });
-        return true;
-      },
-    });
-  },
-});
+  @Field()
+  updatedAt: Date;
+}

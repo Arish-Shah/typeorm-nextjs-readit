@@ -1,38 +1,52 @@
-import { inputObjectType } from "nexus";
+import { Field, ID, InputType, Int } from "type-graphql";
 
-export const RegisterInput = inputObjectType({
-  name: "RegisterInput",
-  definition(t) {
-    t.string("email");
-    t.string("username");
-    t.string("password");
-  },
-});
+@InputType()
+export class RegisterInput {
+  @Field()
+  email: string;
 
-export const SubInput = inputObjectType({
-  name: "SubInput",
-  definition(t) {
-    t.id("name");
-    t.nullable.string("title");
-    t.nullable.string("description");
-    t.nullable.string("image");
-    t.nullable.string("banner");
-  },
-});
+  @Field()
+  username: string;
 
-export const PostInput = inputObjectType({
-  name: "PostInput",
-  definition(t) {
-    t.string("title");
-    t.string("body");
-    t.nullable.string("image");
-  },
-});
+  @Field()
+  password: string;
+}
 
-export const PaginationInput = inputObjectType({
-  name: "PaginationInput",
-  definition(t) {
-    t.int("take");
-    t.nullable.id("cursor");
-  },
-});
+@InputType()
+export class SubInput {
+  @Field(() => ID)
+  name: string;
+
+  @Field({ nullable: true })
+  title?: string;
+
+  @Field({ nullable: true })
+  description?: string;
+
+  @Field({ nullable: true })
+  image?: string;
+
+  @Field({ nullable: true })
+  banner?: string;
+}
+
+@InputType()
+export class PostInput {
+  @Field()
+  title: string;
+
+  @Field()
+  body: string;
+
+  @Field({ nullable: true })
+  image?: string;
+}
+
+@InputType()
+export class PaginationInput {
+  @Field(() => Int)
+  take: number;
+
+  @Field(() => ID, { nullable: true })
+  cursor?: string;
+}

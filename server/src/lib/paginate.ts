@@ -1,7 +1,4 @@
-interface PaginationInput {
-  take: number;
-  cursor?: string | null;
-}
+import { PaginationInput } from "../types/Input";
 
 export const getPaginationData = (input: PaginationInput) => {
   const data: any = { take: input.take + 1 };

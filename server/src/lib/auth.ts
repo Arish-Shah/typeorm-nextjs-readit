@@ -1,4 +1,4 @@
-import { AuthenticationError } from "apollo-server";
+import { AuthenticationError } from "apollo-server-express";
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
 

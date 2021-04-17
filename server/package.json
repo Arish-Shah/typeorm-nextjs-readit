@@ -4,17 +4,27 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "tsnd --no-notify --respawn --transpile-only src/server",
+    "dev": "ts-node-dev --respawn --transpile-only src/server",
     "start": "node dist/server",
     "clean": "rm -rf dist",
-    "build": "yarn clean && yarn generate && tsc",
-    "generate": "yarn generate:prisma && yarn generate:nexus",
-    "generate:prisma": "prisma generate",
-    "generate:nexus": "ts-node --transpile-only src/schema"
+    "build": "yarn clean && tsc"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "2.21.2",
+    "apollo-server-express": "^2.23.0",
+    "bcryptjs": "^2.4.3",
+    "class-validator": "^0.13.1",
+    "cookie": "^0.4.1",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "graphql": "^15.5.0",
+    "jsonwebtoken": "^8.5.1",
+    "reflect-metadata": "^0.1.13",
+    "type-graphql": "^1.1.1"
+  },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.2",
     "@types/cookie": "^0.4.0",
@@ -22,26 +32,7 @@
     "@types/jsonwebtoken": "^8.5.1",
     "@types/node": "^14.14.41",
     "prisma": "2.21.2",
-    "ts-node": "^9.1.1",
     "ts-node-dev": "^1.1.6",
     "typescript": "^4.2.4"
-  },
-  "prettier": {
-    "arrowParens": "always",
-    "semi": true,
-    "trailingComma": "es5",
-    "tabWidth": 2,
-    "singleQuote": false,
-    "useTabs": false
-  },
-  "dependencies": {
-    "@prisma/client": "2.21.2",
-    "apollo-server": "^2.23.0",
-    "bcryptjs": "^2.4.3",
-    "cookie": "^0.4.1",
-    "dotenv": "^8.2.0",
-    "graphql": "^15.5.0",
-    "jsonwebtoken": "^8.5.1",
-    "nexus": "^1.0.0"
   }
 }

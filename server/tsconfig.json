@@ -1,12 +1,17 @@
 {
   "compilerOptions": {
-    "target": "es6",
-    "lib": ["esnext"],
+    "target": "es2018",
+    "module": "commonjs",
+    "lib": ["es2018", "esnext.asynciterable"],
     "rootDir": "src",
     "outDir": "dist",
     "strict": true,
-    "moduleResolution": "node",
     "esModuleInterop": true,
-    "module": "commonjs"
-  }
+    "moduleResolution": "node",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "strictPropertyInitialization": false
+  },
+  "exclude": ["node_modules"],
+  "include": ["src/**/*.ts"]
 }

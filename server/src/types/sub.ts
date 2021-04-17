@@ -1,115 +1,24 @@
-import { ApolloError } from "apollo-server";
-import { extendType, objectType, stringArg } from "nexus";
+import { Field, ID, ObjectType } from "type-graphql";
 
-import { getPaginationData } from "../lib/paginate";
-import { getSession } from "../lib/auth";
-import { PaginatedPosts } from "./page";
-import { PaginationInput, SubInput } from "./input";
+import { PaginatedPosts } from "./Page";
 
-export const Sub = objectType({
-  name: "Sub",
-  definition(t) {
-    t.id("name");
-    t.nullable.string("title");
-    t.nullable.string("description");
-    t.nullable.string("image");
-    t.nullable.string("banner");
+@ObjectType()
+export class Sub {
+  @Field(() => ID)
+  name: string;
 
-    t.int("members", {
-      resolve: (parent, __, { prisma }) => {
-        return prisma.userSub.count({
-          where: {
-            subName: parent.name,
-          },
-        });
-      },
-    });
+  @Field(() => String, { nullable: true })
+  title: string | null;
 
-    t.field("posts", {
-      type: PaginatedPosts,
-      args: {
-        input: PaginationInput,
-      },
-      resolve: async (parent, { input }, { prisma }) => {
-        const paginationData = getPaginationData(input);
+  @Field(() => String, { nullable: true })
+  description: string | null;
 
-        const posts = await prisma.post.findMany({
-          where: { subName: parent.name },
-          orderBy: { createdAt: "desc" },
-          ...paginationData,
-        });
+  @Field(() => String, { nullable: true })
+  image: string | null;
 
-        return {
-          hasMore: posts.length === input.take + 1,
-          posts: posts.slice(0, input.take),
-        };
-      },
-    });
-  },
-});
+  @Field(() => String, { nullable: true })
+  banner: string | null;
 
-export const Mutation = extendType({
-  type: "Mutation",
-  definition(t) {
-    t.field("createSub", {
-      type: Sub,
-      args: {
-        input: SubInput,
-      },
-      resolve: async (_, { input }, { prisma }) => {
-        try {
-          const sub = await prisma.sub.create({
-            data: { ...input },
-          });
-          return sub;
-        } catch (e) {
-          throw new ApolloError("sub already exists");
-        }
-      },
-    });
-
-    t.boolean("joinOrLeave", {
-      args: {
-        subName: stringArg(),
-      },
-      resolve: async (_, { subName }, { req, prisma }) => {
-        const { userId } = getSession(req, true)!;
-        try {
-          await prisma.userSub.create({
-            data: {
-              userId,
-              subName,
-            },
-          });
-          return true;
-        } catch (e) {
-          throw new ApolloError("sub not found");
-        }
-      },
-    });
-  },
-});
-
-export const Query = extendType({
-  type: "Query",
-  definition(t) {
-    t.field("sub", {
-      type: Sub,
-      args: {
-        name: stringArg(),
-      },
-      resolve: async (_, { name }, { prisma }) => {
-        try {
-          const sub = await prisma.sub.findUnique({
-            where: {
-              name,
-            },
-          });
-          return sub;
-        } catch (e) {
-          throw new ApolloError("sub not found");
-        }
-      },
-    });
-  },
-});
+  @Field(() => PaginatedPosts)
+  posts?: PaginatedPosts;
+}

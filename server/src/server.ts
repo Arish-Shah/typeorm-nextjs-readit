@@ -1,4 +1,6 @@
-import { ApolloServer } from "apollo-server";
+import "reflect-metadata";
+import { ApolloServer } from "apollo-server-express";
+import express from "express";
 import dotenv from "dotenv";
 
 import { schema } from "./schema";
@@ -11,6 +13,10 @@ const server = new ApolloServer({
   context,
 });
 
-server.listen(process.env.PORT).then(({ url }) => {
-  console.log(`🚀 GraphQL server running on ${url}`);
+const app = express();
+
+server.applyMiddleware({ app });
+
+app.listen(process.env.PORT, () => {
+  console.log(`🚀 GraphQL server running on http://localhost:4000/graphql`);
 });
