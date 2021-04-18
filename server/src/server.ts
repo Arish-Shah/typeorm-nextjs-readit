@@ -15,7 +15,13 @@ const server = new ApolloServer({
 
 const app = express();
 
-server.applyMiddleware({ app });
+server.applyMiddleware({
+  app,
+  cors: {
+    origin: process.env.CLIENT_ORIGIN,
+    credentials: true,
+  },
+});
 
 app.listen(process.env.PORT, () => {
   console.log(`🚀 GraphQL server running on http://localhost:4000/graphql`);
