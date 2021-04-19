@@ -1,20 +1,10 @@
-import { useQuery } from "@apollo/client";
-import gql from "graphql-tag";
-
 import withApollo from "~/lib/apollo";
-
-const QUERY = gql`
-  query {
-    me {
-      id
-    }
-  }
-`;
+import { useMeQuery } from "~/generated/graphql";
 
 const Index = () => {
-  const { data, loading } = useQuery(QUERY);
+  const { data, loading, error } = useMeQuery();
 
-  console.log(data);
+  console.log({ loading, data, error });
 
   return (
     <main>

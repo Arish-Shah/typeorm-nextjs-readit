@@ -1,6 +1,7 @@
 import "reflect-metadata";
 import { ApolloServer } from "apollo-server-express";
 import express from "express";
+import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 
 import { schema } from "./schema";
@@ -14,6 +15,8 @@ const server = new ApolloServer({
 });
 
 const app = express();
+
+app.use(cookieParser());
 
 server.applyMiddleware({
   app,

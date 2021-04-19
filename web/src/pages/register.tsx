@@ -8,47 +8,48 @@ import Head from "next/head";
 import NextLink from "next/link";
 import { useRouter } from "next/router";
 
-import { MeDocument, MeQuery, useLoginMutation } from "~/generated/graphql";
+import { MeDocument, MeQuery, useRegisterMutation } from "~/generated/graphql";
 import withApollo from "~/lib/apollo";
 
 const Login = () => {
+  const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
   const router = useRouter();
 
-  const usernameRef = useRef<HTMLInputElement>(null);
+  const emailRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    usernameRef.current.focus();
+    emailRef.current.focus();
   }, []);
 
-  const [login, { error, loading }] = useLoginMutation({
+  const [register, { error, loading }] = useRegisterMutation({
     errorPolicy: "all",
     update(cache, { data }) {
       cache.writeQuery<MeQuery>({
         query: MeDocument,
         data: {
-          me: { ...data.login },
+          me: { ...data.register },
         },
       });
     },
     onCompleted(data) {
-      if (data?.login) router.push("/");
+      if (data?.register) router.push("/");
     },
   });
 
   const onSubmit: FormEventHandler = (event) => {
     event.preventDefault();
-    login({
-      variables: { username, password },
+    register({
+      variables: { input: { email, username, password } },
     });
   };
 
   return (
     <Fragment>
       <Head>
-        <title>readit: log in</title>
+        <title>readit: join the worldwide conversation</title>
       </Head>
       <Flex height="100vh">
         <Box
@@ -59,7 +60,7 @@ const Login = () => {
         <Flex h="full" alignItems="center">
           <Box p="6" w="full" maxW="330px">
             <Heading fontSize="xl" fontWeight="medium" my="3">
-              login
+              sign up
             </Heading>
             <Text fontSize="xs">
               By continuing, you agree to our User Agreement and Privacy Policy.
@@ -73,11 +74,21 @@ const Login = () => {
               )}
               <FormControl my="3">
                 <Input
+                  type="email"
+                  placeholder="email"
+                  ref={emailRef}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  isInvalid={!!error}
+                  required
+                />
+              </FormControl>
+              <FormControl my="3">
+                <Input
                   type="text"
-                  placeholder="username"
+                  placeholder="choose a username"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  ref={usernameRef}
                   isInvalid={!!error}
                   required
                 />
@@ -98,14 +109,14 @@ const Login = () => {
                 w="full"
                 isLoading={loading}
               >
-                log in
+                continue
               </Button>
             </Box>
             <Text fontSize="xs">
-              new to readit?{" "}
-              <NextLink href="/register">
+              already a readitor?{" "}
+              <NextLink href="/login">
                 <Link color="blue.200" fontWeight="medium">
-                  sign up
+                  log in
                 </Link>
               </NextLink>
             </Text>
