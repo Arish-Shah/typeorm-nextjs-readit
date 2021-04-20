@@ -1,4 +1,5 @@
 import { Fragment } from "react";
+import { Flex } from "@chakra-ui/layout";
 
 import Navbar from "./Navbar";
 
@@ -6,7 +7,7 @@ const Layout: React.FC = ({ children }) => {
   return (
     <Fragment>
       <Navbar />
-      {children}
+      <Flex mt="14">{children}</Flex>
     </Fragment>
   );
 };

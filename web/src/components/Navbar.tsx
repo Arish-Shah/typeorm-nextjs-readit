@@ -1,13 +1,112 @@
-import { Box, Flex } from "@chakra-ui/layout";
+import { Button } from "@chakra-ui/button";
+import {
+  CheckCircleIcon,
+  ChevronDownIcon,
+  EditIcon,
+  SearchIcon,
+} from "@chakra-ui/icons";
+import { Input, InputGroup, InputLeftElement } from "@chakra-ui/input";
+import { Box, Flex, Heading } from "@chakra-ui/layout";
+import { Menu, MenuButton, MenuItem, MenuList } from "@chakra-ui/menu";
+import NextLink from "next/link";
 
 import { useMeQuery } from "~/generated/graphql";
+import UserIcon from "./Icons/UserIcon";
 
 const Navbar = () => {
-  const { data, loading } = useMeQuery();
+  const { data, loading, error } = useMeQuery({
+    errorPolicy: "all",
+  });
+
+  let rightSide = null;
+
+  if (loading) {
+    rightSide = <div>loading...</div>;
+  } else if (error) {
+    rightSide = (
+      <Flex>
+        <NextLink href="/login" passHref>
+          <Button as="a">log in</Button>
+        </NextLink>
+        <NextLink href="/register" passHref>
+          <Button ml="2" as="a" colorScheme="blue">
+            sign up
+          </Button>
+        </NextLink>
+        <Menu>
+          <MenuButton
+            as={Button}
+            background="transparent"
+            ml="2"
+            rightIcon={<ChevronDownIcon />}
+          >
+            <UserIcon boxSize="6" />
+          </MenuButton>
+          <MenuList>
+            <MenuItem>help</MenuItem>
+            <MenuItem>log in/sign up</MenuItem>
+          </MenuList>
+        </Menu>
+      </Flex>
+    );
+  } else if (data.me.id) {
+    rightSide = (
+      <Flex>
+        <NextLink href="/submit">
+          <Button bg="transparent">
+            <EditIcon />
+          </Button>
+        </NextLink>
+        <Menu>
+          <MenuButton
+            as={Button}
+            ml="2"
+            textAlign="left"
+            width="36"
+            rightIcon={<ChevronDownIcon />}
+          >
+            u/{data.me.username}
+          </MenuButton>
+          <MenuList>
+            <MenuItem>profile</MenuItem>
+            <MenuItem>settings</MenuItem>
+            <MenuItem>help</MenuItem>
+            <MenuItem>logout</MenuItem>
+          </MenuList>
+        </Menu>
+      </Flex>
+    );
+  }
 
   return (
-    <Flex>
-      <Box>hello</Box>
+    <Flex
+      py="1"
+      px="4"
+      borderBottom="1px"
+      borderBottomColor="gray.600"
+      position="fixed"
+      left="0"
+      top="0"
+      width="full"
+      justifyContent="space-between"
+      bg="gray.800"
+    >
+      <NextLink href="/" passHref>
+        <Flex as="a" alignItems="center" cursor="pointer">
+          <CheckCircleIcon boxSize="7" color="orangered" />
+          <Heading fontSize="xl" fontWeight="medium" ml="1">
+            Readit
+          </Heading>
+        </Flex>
+      </NextLink>
+      <InputGroup mx="5" maxWidth="650px">
+        <InputLeftElement
+          pointerEvents="none"
+          children={<SearchIcon color="gray.400" />}
+        />
+        <Input placeholder="search" />
+      </InputGroup>
+      {rightSide}
     </Flex>
   );
 };
