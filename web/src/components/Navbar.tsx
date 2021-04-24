@@ -6,8 +6,9 @@ import {
   SearchIcon,
 } from "@chakra-ui/icons";
 import { Input, InputGroup, InputLeftElement } from "@chakra-ui/input";
-import { Box, Flex, Heading } from "@chakra-ui/layout";
+import { Flex, Heading, Stack } from "@chakra-ui/layout";
 import { Menu, MenuButton, MenuItem, MenuList } from "@chakra-ui/menu";
+import { Skeleton } from "@chakra-ui/skeleton";
 import NextLink from "next/link";
 
 import { useMeQuery } from "~/generated/graphql";
@@ -21,7 +22,12 @@ const Navbar = () => {
   let rightSide = null;
 
   if (loading) {
-    rightSide = <div>loading...</div>;
+    rightSide = (
+      <Stack direction="row">
+        <Skeleton w="20"></Skeleton>
+        <Skeleton w="20"></Skeleton>
+      </Stack>
+    );
   } else if (error) {
     rightSide = (
       <Flex>
@@ -49,7 +55,7 @@ const Navbar = () => {
         </Menu>
       </Flex>
     );
-  } else if (data.me.id) {
+  } else if (data?.me?.id) {
     rightSide = (
       <Flex>
         <NextLink href="/submit">
@@ -62,7 +68,6 @@ const Navbar = () => {
             as={Button}
             ml="2"
             textAlign="left"
-            width="36"
             rightIcon={<ChevronDownIcon />}
           >
             u/{data.me.username}
@@ -80,7 +85,7 @@ const Navbar = () => {
 
   return (
     <Flex
-      py="1"
+      py="2"
       px="4"
       borderBottom="1px"
       borderBottomColor="gray.600"
@@ -95,7 +100,7 @@ const Navbar = () => {
         <Flex as="a" alignItems="center" cursor="pointer">
           <CheckCircleIcon boxSize="7" color="orangered" />
           <Heading fontSize="xl" fontWeight="medium" ml="1">
-            Readit
+            readit
           </Heading>
         </Flex>
       </NextLink>

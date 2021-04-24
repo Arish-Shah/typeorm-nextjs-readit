@@ -76,6 +76,7 @@ type Query {
   feed(input: PaginationInput!): PaginatedPosts!
   me: User!
   post(id: ID!): Post!
+  recommended: [Sub!]!
   sub(name: ID!): Sub!
 }
 
@@ -89,6 +90,7 @@ type Sub {
   banner: String
   description: String
   image: String
+  isSubbed: Boolean!
   members: Int!
   name: ID!
   posts(input: PaginationInput!): PaginatedPosts!

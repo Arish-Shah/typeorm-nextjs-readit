@@ -20,6 +20,24 @@ import { getPaginationData } from "../lib/paginate";
 
 @Resolver(Sub)
 export class SubResolver {
+  @FieldResolver(() => Boolean)
+  async isSubbed(
+    @Root() parent: Sub,
+    @Ctx() { req, prisma }: Context
+  ): Promise<boolean> {
+    const session = getSession(req);
+    if (!session) return false;
+    const subbed = await prisma.userSub.findUnique({
+      where: {
+        userId_subName: {
+          subName: parent.name,
+          userId: session.userId,
+        },
+      },
+    });
+    return Boolean(subbed);
+  }
+
   @FieldResolver(() => Int)
   members(@Root() parent: Sub, @Ctx() { prisma }: Context): Promise<number> {
     return prisma.userSub.count({
@@ -47,6 +65,13 @@ export class SubResolver {
       hasMore: posts.length === input.take + 1,
       posts: posts.slice(0, input.take),
     };
+  }
+
+  @Query(() => [Sub])
+  async recommended(@Ctx() { prisma }: Context): Promise<Sub[]> {
+    return prisma.sub.findMany({
+      take: 5,
+    });
   }
 
   @Query(() => Sub)

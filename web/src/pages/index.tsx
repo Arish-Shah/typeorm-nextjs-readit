@@ -1,20 +1,25 @@
 import Head from "next/head";
 
 import withApollo from "~/lib/apollo";
-import { useMeQuery } from "~/generated/graphql";
+import { useFeedQuery } from "~/generated/graphql";
 import Layout from "~/components/Layout";
 
 const Index = () => {
-  const { data, loading, error } = useMeQuery();
+  const { data, loading } = useFeedQuery({
+    variables: {
+      input: {
+        take: 10,
+      },
+    },
+  });
 
-  console.log({ loading, data, error });
+  console.log(data);
 
   return (
     <Layout>
       <Head>
         <title>readit: the front page of the internet</title>
       </Head>
-      <h1>{data?.me?.id}</h1>
     </Layout>
   );
 };
