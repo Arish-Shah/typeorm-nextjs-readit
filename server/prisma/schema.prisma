@@ -20,6 +20,7 @@ model User {
   commentVotes CommentVote[]
   password     String
   createdAt    DateTime @default(now()) @map("created_at")
+
   @@map("users")
 }
 
@@ -31,13 +32,15 @@ model Sub {
   banner      String?
   members     UserSub[]
   posts       Post[]
+  createdAt    DateTime @default(now()) @map("created_at")
+
   @@map("subs")
 }
 
 model Post {
   id        String @id @default(cuid())
   title     String
-  body      String
+  body      String?
   image     String?
   creator   User @relation(fields: [creatorId], references: [id])
   creatorId String @map("creator_id")
@@ -47,6 +50,7 @@ model Post {
   votes     PostVote[]
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
+
   @@map("posts")
 }
 
@@ -55,6 +59,7 @@ model UserSub {
   userId  String @map("user_id")
   sub     Sub @relation(fields: [subName], references: [name])
   subName String @map("sub_name")
+
   @@id([userId, subName])
   @@map("user_subs")
 }
@@ -69,6 +74,7 @@ model Comment {
   votes     CommentVote[]
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @default(now()) @map("updated_at")
+
   @@map("comments")
 }
 
@@ -78,6 +84,7 @@ model PostVote {
   userId String @map("user_id")
   post   Post @relation(fields: [postId], references: [id])
   postId String @map("post_id")
+
   @@id([userId, postId])
   @@map("post_votes")
 }
@@ -88,6 +95,7 @@ model CommentVote {
   userId    String @map("user_id")
   comment   Comment @relation(fields: [commentId], references: [id])
   commentId String @map("comment_id")
+
   @@id([userId, commentId])
   @@map("comment_votes")
 }

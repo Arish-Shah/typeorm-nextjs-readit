@@ -1,8 +1,9 @@
 import Head from "next/head";
 
-import withApollo from "~/lib/apollo";
-import { useFeedQuery } from "~/generated/graphql";
+import { MeDocument, useFeedQuery } from "~/generated/graphql";
 import Layout from "~/components/Layout";
+import { GetServerSideProps } from "next";
+import { initializeApollo } from "~/lib/apollo";
 
 const Index = () => {
   const { data, loading } = useFeedQuery({
@@ -13,8 +14,6 @@ const Index = () => {
     },
   });
 
-  console.log(data);
-
   return (
     <Layout>
       <Head>
@@ -24,4 +23,18 @@ const Index = () => {
   );
 };
 
-export default withApollo({ ssr: true })(Index);
+export const getServerSideProps: GetServerSideProps = async () => {
+  const apolloClient = initializeApollo();
+
+  await apolloClient.query({
+    query: MeDocument,
+  });
+
+  return {
+    props: {
+      initializeApollo: apolloClient.cache.extract(),
+    },
+  };
+};
+
+export default Index;

@@ -10,13 +10,22 @@ import { Flex, Heading, Stack } from "@chakra-ui/layout";
 import { Menu, MenuButton, MenuItem, MenuList } from "@chakra-ui/menu";
 import { Skeleton } from "@chakra-ui/skeleton";
 import NextLink from "next/link";
+import { useRouter } from "next/router";
 
-import { useMeQuery } from "~/generated/graphql";
+import { useMeQuery, useLogoutMutation } from "~/generated/graphql";
 import UserIcon from "./Icons/UserIcon";
 
 const Navbar = () => {
   const { data, loading, error } = useMeQuery({
     errorPolicy: "all",
+  });
+
+  const router = useRouter();
+
+  const [logout] = useLogoutMutation({
+    onCompleted() {
+      router.reload();
+    },
   });
 
   let rightSide = null;
@@ -76,7 +85,7 @@ const Navbar = () => {
             <MenuItem>profile</MenuItem>
             <MenuItem>settings</MenuItem>
             <MenuItem>help</MenuItem>
-            <MenuItem>logout</MenuItem>
+            <MenuItem onClick={() => logout()}>logout</MenuItem>
           </MenuList>
         </Menu>
       </Flex>

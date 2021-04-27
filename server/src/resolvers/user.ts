@@ -3,6 +3,7 @@ import {
   Arg,
   Ctx,
   FieldResolver,
+  Int,
   Mutation,
   Query,
   Resolver,
@@ -30,6 +31,15 @@ export class UserResolver {
     });
     if (!user) throw new ApolloError("user not found");
     return user;
+  }
+
+  @FieldResolver(() => Int)
+  async karma(
+    @Root() parent: User,
+    @Ctx() { prisma }: Context
+  ): Promise<number> {
+    // todo
+    return 0;
   }
 
   @FieldResolver(() => PaginatedPosts)

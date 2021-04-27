@@ -51,7 +51,7 @@ input PaginationInput {
 }
 
 type Post {
-  body: String!
+  body: String
   comments(input: PaginationInput!): PaginatedComments!
   createdAt: DateTime!
   creator: User
@@ -88,6 +88,7 @@ input RegisterInput {
 
 type Sub {
   banner: String
+  createdAt: DateTime!
   description: String
   image: String
   isSubbed: Boolean!
@@ -112,6 +113,7 @@ type User {
   email: String!
   id: ID!
   image: String
+  karma: Int!
   posts(input: PaginationInput!): PaginatedPosts!
   username: String!
 }

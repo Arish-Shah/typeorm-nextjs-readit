@@ -9,7 +9,6 @@ import NextLink from "next/link";
 import { useRouter } from "next/router";
 
 import { MeDocument, MeQuery, useRegisterMutation } from "~/generated/graphql";
-import withApollo from "~/lib/apollo";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -127,4 +126,4 @@ const Login = () => {
   );
 };
 
-export default withApollo({ ssr: false })(Login);
+export default Login;

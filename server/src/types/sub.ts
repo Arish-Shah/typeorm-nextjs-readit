@@ -21,4 +21,7 @@ export class Sub {
 
   @Field(() => PaginatedPosts)
   posts?: PaginatedPosts;
+
+  @Field()
+  createdAt: Date;
 }
