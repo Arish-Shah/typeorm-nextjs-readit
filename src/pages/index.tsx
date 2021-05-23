@@ -1,4 +1,4 @@
-const Index = () => {
+const IndexPage = () => {
   return (
     <main>
       <h1>Hello World</h1>
@@ -6,4 +6,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default IndexPage;

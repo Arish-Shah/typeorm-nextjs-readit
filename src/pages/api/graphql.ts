@@ -1,16 +1,12 @@
-import { ApolloServer, gql } from "apollo-server-micro";
+import { ApolloServer } from "apollo-server-micro";
+
+import { schema } from "@/graphql/schema";
+import { context } from "@/graphql/context";
 
 const server = new ApolloServer({
-  typeDefs: gql`
-    type Query {
-      hi: String!
-    }
-  `,
-  resolvers: {
-    Query: {
-      hi: () => "hey!",
-    },
-  },
+  schema,
+  context,
+  tracing: process.env.NODE_ENV === "development",
 });
 
 export const config = {
