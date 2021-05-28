@@ -5,21 +5,25 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
+    "export": "next export",
     "start": "next start"
   },
   "dependencies": {
     "@prisma/client": "2.23.0",
-    "apollo-server-micro": "^2.24.1",
+    "apollo-server-micro": "^2.25.0",
     "graphql": "^15.5.0",
     "next": "10.2.3",
-    "next-auth": "^3.23.3",
+    "next-auth": "^3.24.0",
     "nexus": "^1.0.0",
     "react": "17.0.2",
     "react-dom": "17.0.2"
   },
   "devDependencies": {
     "@types/react": "^17.0.8",
+    "autoprefixer": "^10.2.6",
+    "postcss": "^8.3.0",
     "prisma": "2.23.0",
+    "tailwindcss": "^2.1.2",
     "typescript": "^4.3.2"
   }
 }

@@ -51,6 +51,7 @@ export interface NexusGenObjects {
     id: string; // ID!
     image?: string | null; // String
     name?: string | null; // String
+    updatedAt: NexusGenScalars['Date']; // Date!
   }
 }
 
@@ -74,6 +75,7 @@ export interface NexusGenFieldTypes {
     id: string; // ID!
     image: string | null; // String
     name: string | null; // String
+    updatedAt: NexusGenScalars['Date']; // Date!
   }
 }
 
@@ -87,6 +89,7 @@ export interface NexusGenFieldTypeNames {
     id: 'ID'
     image: 'String'
     name: 'String'
+    updatedAt: 'Date'
   }
 }
 

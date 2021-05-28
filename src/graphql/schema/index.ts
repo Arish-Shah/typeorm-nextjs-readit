@@ -6,13 +6,13 @@ import * as ScalarTypes from "./scalar";
 
 export const schema = makeSchema({
   types: [UserTypes, ScalarTypes],
-  contextType: {
-    module: path.join(process.cwd(), "src/graphql/context.ts"),
-    export: "Context",
-  },
   outputs: {
     schema: path.join(process.cwd(), "src/generated/schema.gql"),
     typegen: path.join(process.cwd(), "src/generated/nexusTypes.ts"),
+  },
+  contextType: {
+    module: path.join(process.cwd(), "src/graphql/context.ts"),
+    export: "Context",
   },
   nonNullDefaults: {
     input: true,

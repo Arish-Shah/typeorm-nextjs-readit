@@ -19,4 +19,10 @@ export default NextAuth({
     }),
   ],
   adapter: Adapters.Prisma.Adapter({ prisma }),
+  callbacks: {
+    session: async (session, user) => {
+      session.user.id = user.id as string;
+      return session;
+    },
+  },
 });

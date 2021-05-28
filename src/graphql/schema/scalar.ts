@@ -1,5 +1,5 @@
-import { scalarType } from "nexus";
 import { Kind } from "graphql";
+import { scalarType } from "nexus";
 
 export const DateScalar = scalarType({
   name: "Date",

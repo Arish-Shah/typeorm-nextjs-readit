@@ -9,6 +9,7 @@ export const User = objectType({
     t.nullable.string("email");
     t.nullable.string("image");
     t.date("createdAt");
+    t.date("updatedAt");
   },
 });
 
@@ -16,10 +17,16 @@ export const Query = extendType({
   type: "Query",
   definition(t) {
     t.nullable.field("me", {
-      type: User,
-      resolve: async (_, __, { req }) => {
+      type: "User",
+      resolve: async (_, __, { req, prisma }) => {
         const session = await getSession({ req });
-        console.log(session.user);
+        if (session?.user?.id) {
+          return prisma.user.findUnique({
+            where: {
+              id: session.user.id,
+            },
+          });
+        }
         return null;
       },
     });

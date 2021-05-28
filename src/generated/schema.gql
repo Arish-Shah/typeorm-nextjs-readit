@@ -15,4 +15,5 @@ type User {
   id: ID!
   image: String
   name: String
+  updatedAt: Date!
 }
