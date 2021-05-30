@@ -25,4 +25,8 @@ export default NextAuth({
       return session;
     },
   },
+  pages: {
+    signIn: "/auth",
+    verifyRequest: "/auth/verify",
+  },
 });
