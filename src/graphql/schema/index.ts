@@ -2,12 +2,14 @@ import { makeSchema } from "nexus";
 import path from "path";
 
 import * as UserTypes from "./user";
+import * as AuthTypes from "./auth";
 import * as ScalarTypes from "./scalar";
+import * as InputTypes from "./input";
 
 export const schema = makeSchema({
-  types: [UserTypes, ScalarTypes],
+  types: [UserTypes, ScalarTypes, AuthTypes, InputTypes],
   outputs: {
-    schema: path.join(process.cwd(), "src/generated/schema.gql"),
+    schema: path.join(process.cwd(), "src/generated/schema.graphql"),
     typegen: path.join(process.cwd(), "src/generated/nexusTypes.ts"),
   },
   contextType: {

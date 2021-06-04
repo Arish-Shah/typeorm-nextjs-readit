@@ -10,9 +10,5 @@ export interface Context {
 }
 
 export const context = ({ req, res }): Context => {
-  return {
-    req,
-    res,
-    prisma,
-  };
+  return { req, res, prisma };
 };

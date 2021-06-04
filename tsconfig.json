@@ -21,7 +21,6 @@
       "@/layouts/*": ["layouts/*"],
       "@/modules/*": ["modules/*"],
       "@/pages/*": ["pages/*"],
-      "@/components/*": ["common/components/*"],
       "@/lib/*": ["common/lib/*"]
     }
   },
