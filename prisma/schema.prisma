@@ -14,6 +14,38 @@ model User {
   name      String?
   image     String?
   password  String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  posts     Post[]
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
+model Sub {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  title       String?
+  description String?
+  image       String?
+  banner      String?
+  posts       Post[]
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("subs")
+}
+
+model Post {
+  id        String   @id @default(cuid())
+  title     String
+  body      String?
+  image     String?
+  link      String?
+  sub       Sub      @relation(fields: [subName], references: [name])
+  subName   String   @map("sub_name")
+  creator   User     @relation(fields: [creatorId], references: [id])
+  creatorId String   @map("creator_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("posts")
 }

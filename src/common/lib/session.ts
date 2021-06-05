@@ -16,7 +16,7 @@ export const setSession = (res: NextApiResponse, session: Session) => {
 
   const cookie = serialize(COOKIE_NAME, token, {
     httpOnly: true,
-    domain: "/",
+    path: "/",
     sameSite: "lax",
     maxAge: 60 * 60 * 8,
     secure: process.env.NODE_ENV === "production",

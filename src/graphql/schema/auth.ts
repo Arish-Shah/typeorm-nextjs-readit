@@ -1,18 +1,25 @@
-import { extendType, stringArg } from "nexus";
+import { extendType } from "nexus";
 import { ApolloError, UserInputError } from "apollo-server-micro";
 import { hash, compare } from "bcryptjs";
 
 import { validateRegister } from "@/common/lib/validate";
-import { setSession } from "@/common/lib/session";
-import { RegisterInput } from "./input";
+import { clearSession, getSession, setSession } from "@/common/lib/session";
 
 export const Query = extendType({
   type: "Query",
   definition(t) {
     t.nullable.field("me", {
       type: "User",
-      resolve: () => {
-        return null;
+      resolve: async (_, __, { req, prisma }) => {
+        try {
+          const { userId: id } = getSession(req);
+          const user = await prisma.user.findUnique({
+            where: { id },
+          });
+          return user;
+        } catch (e) {
+          return null;
+        }
       },
     });
   },
@@ -24,22 +31,20 @@ export const Mutation = extendType({
     t.field("login", {
       type: "User",
       args: {
-        username: stringArg(),
-        password: stringArg(),
+        input: "LoginInput",
       },
-      resolve: async (_, { username, password }, { res, prisma }) => {
+      resolve: async (_, { input }, { res, prisma }) => {
         const user = await prisma.user.findUnique({
-          where: { username },
+          where: { username: input.username },
         });
         if (!user) throw new ApolloError("user not found");
 
-        const valid = await compare(password, user.password);
+        const valid = await compare(input.password, user.password);
         if (!valid) throw new ApolloError("invalid username or password");
 
         setSession(res, {
           userId: user.id,
         });
-
         return user;
       },
     });
@@ -47,7 +52,7 @@ export const Mutation = extendType({
     t.field("register", {
       type: "User",
       args: {
-        input: RegisterInput,
+        input: "RegisterInput",
       },
       resolve: async (_, { input }, { prisma }) => {
         const error = validateRegister(input);
@@ -62,6 +67,13 @@ export const Mutation = extendType({
         } catch (e) {
           throw new ApolloError("user already exists");
         }
+      },
+    });
+
+    t.boolean("logout", {
+      resolve: (_, __, { res }) => {
+        clearSession(res);
+        return true;
       },
     });
   },
