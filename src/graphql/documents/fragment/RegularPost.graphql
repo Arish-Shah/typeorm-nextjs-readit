@@ -1,0 +1,14 @@
+fragment RegularPost on Post {
+  id
+  title
+  body
+  postType
+  sub {
+    name
+    createdAt
+  }
+  creator {
+    id
+    createdAt
+  }
+}

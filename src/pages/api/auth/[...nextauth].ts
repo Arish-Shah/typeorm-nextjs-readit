@@ -18,6 +18,12 @@ export default NextAuth({
       from: process.env.EMAIL_FROM,
     }),
   ],
+  pages: {
+    signIn: "/auth/signin",
+    signOut: "/auth/signout",
+    verifyRequest: "/auth/verify-request",
+    error: "/auth/signin",
+  },
   callbacks: {
     session: async (session, user) => {
       session.user.id = user.id as string;

@@ -1,0 +1,8 @@
+fragment RegularSub on Sub {
+  name
+  title
+  description
+  image
+  banner
+  createdAt
+}
