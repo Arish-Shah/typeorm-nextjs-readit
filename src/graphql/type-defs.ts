@@ -6,58 +6,41 @@ export const typeDefs = gql`
   }
 
   type Mutation {
-    register(input: RegisterInput!): User!
-    login(input: LoginInput!): User!
-    logout: Boolean!
     createOrUpdateSub(input: SubInput!): Sub!
     createPost(input: PostInput!, subName: String!): Post!
-    updatePost(id: ID!, input: PostInput!): Post!
+    editPost(id: ID!, input: PostInput!): Post!
     deletePost(id: ID!): Boolean!
   }
 
   type User {
     id: ID!
-    email: String!
-    username: String!
     name: String
+    email: String
     image: String
-    createdAt: Date!
-    updatedAt: Date!
+    createdAt: DateTime!
+    updatedAt: DateTime!
   }
 
   type Sub {
-    id: ID!
-    name: String!
+    name: ID!
     title: String
     description: String
     image: String
     banner: String
-    createdAt: Date!
+    createdAt: DateTime!
   }
 
   type Post {
     id: ID!
     title: String!
-    body: String
-    image: String
-    link: String
-    creator: User
-    creatorId: String!
+    body: String!
+    postType: PostType!
     sub: Sub
     subName: String!
-    createdAt: Date!
-    updatedAt: Date!
-  }
-
-  input RegisterInput {
-    email: String!
-    username: String!
-    password: String!
-  }
-
-  input LoginInput {
-    username: String!
-    password: String!
+    creator: User
+    creatorId: String!
+    createdAt: DateTime!
+    updatedAt: DateTime!
   }
 
   input SubInput {
@@ -70,10 +53,15 @@ export const typeDefs = gql`
 
   input PostInput {
     title: String!
-    body: String
-    image: String
-    link: String
+    body: String!
+    postType: PostType!
   }
 
-  scalar Date
+  enum PostType {
+    TEXT
+    IMAGE
+    LINK
+  }
+
+  scalar DateTime
 `;

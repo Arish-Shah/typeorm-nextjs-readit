@@ -1,23 +1,20 @@
-import { PostInput, RegisterInput, SubInput } from "@/generated/backend";
+import { NexusGenInputs } from "@/generated/nexusTypes";
 
-const emailRegex = /^([a-z0-9_\.-]+\@[\da-z\.-]+\.[a-z\.]{2,6})$/;
-const usernameRegex = /^[A-Za-z0-9_-]+$/;
-const imageRegex = /^(?:https?:\/\/)?(?:[^.]+\.)?imgur\.com(\/.*)?$/;
+type SubInput = NexusGenInputs["SubInput"];
+type PostInput = NexusGenInputs["PostInput"];
 
-export const validateRegister = (input: RegisterInput) => {
-  if (!emailRegex.test(input.email)) return "invalid email";
-  if (!usernameRegex.test(input.username)) return "invalid username";
-  if (input.password.length < 3) return "password min 8 characters";
-};
+const nameRegex = /^[A-Za-z0-9_-]+$/;
+const urlRegex = /^(?:https?:\/\/)?(?:[^.]+\.)?imgur\.com(\/.*)?$/;
 
 export const validateSub = (input: SubInput) => {
-  if (!usernameRegex.test(input.name)) return "invalid name";
-  if (input.image && !imageRegex.test(input.image)) return "invalid image url";
-  if (input.banner && !imageRegex.test(input.banner))
-    return "invalid banner url";
+  if (!nameRegex.test(input.name)) return "invalid name";
+  if (input.image && !urlRegex.test(input.image)) return "invalid image url";
+  if (input.banner && !urlRegex.test(input.banner)) return "invalid banner url";
 };
 
 export const validatePost = (input: PostInput) => {
-  if (input.title.length <= 0) return "title required";
-  if (input.image && !imageRegex.test(input.image)) return "invalid image url";
+  if (input.title.trim().length === 0) return "title required";
+  if (input.body.trim().length === 0) return "body required";
+  if (input.postType === "IMAGE" && !urlRegex.test(input.body))
+    return "invalid image url";
 };

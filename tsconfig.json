@@ -21,9 +21,12 @@
       "@/layouts/*": ["layouts/*"],
       "@/modules/*": ["modules/*"],
       "@/pages/*": ["pages/*"],
-      "@/lib/*": ["common/lib/*"]
+      "@/types/*": ["types/*"],
+      "@/components/*": ["common/components/*"],
+      "@/lib/*": ["common/lib/*"],
+      "@/utils/*": ["common/utils/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": ["src/types/*.ts", "**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"]
 }

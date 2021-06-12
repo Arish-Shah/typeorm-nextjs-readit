@@ -2,11 +2,7 @@ overwrite: true
 schema: "http://localhost:3000/api/graphql"
 documents: "src/graphql/documents/**/*.graphql"
 generates:
-  src/generated/backend.tsx:
-    plugins:
-      - "typescript"
-      - "typescript-resolvers"
-  src/generated/frontend.tsx:
+  src/generated/graphql-hooks.tsx:
     plugins:
       - "typescript"
       - "typescript-operations"
