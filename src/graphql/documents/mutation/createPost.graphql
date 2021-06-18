@@ -1,5 +1,0 @@
-mutation CreatePost($input: PostInput!, $subName: ID!) {
-  createPost(input: $input, subName: $subName) {
-    ...RegularPost
-  }
-}

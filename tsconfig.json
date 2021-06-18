@@ -4,7 +4,7 @@
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
-    "strict": false,
+    "strict": true,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "esModuleInterop": true,
@@ -12,21 +12,8 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve",
-    "baseUrl": "./src",
-    "paths": {
-      "@/common/*": ["common/*"],
-      "@/generated/*": ["generated/*"],
-      "@/graphql/*": ["graphql/*"],
-      "@/layouts/*": ["layouts/*"],
-      "@/modules/*": ["modules/*"],
-      "@/pages/*": ["pages/*"],
-      "@/types/*": ["types/*"],
-      "@/components/*": ["common/components/*"],
-      "@/lib/*": ["common/lib/*"],
-      "@/utils/*": ["common/utils/*"]
-    }
+    "jsx": "preserve"
   },
-  "include": ["src/types/*.ts", "**/*.ts", "**/*.tsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"]
 }

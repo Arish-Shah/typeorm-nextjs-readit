@@ -1,5 +1,0 @@
-mutation CreateOrUpdateSub($input: SubInput!) {
-  createOrUpdateSub(input: $input) {
-    ...RegularSub
-  }
-}

@@ -1,34 +1,22 @@
 {
-  "name": "readit",
+  "name": "fullstack-nextjs-graphql",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "codegen": "graphql-codegen --config codegen.yml"
+    "lint": "next lint"
   },
   "dependencies": {
-    "@next-auth/prisma-adapter": "^0.4.4-canary.64",
-    "@prisma/client": "^2.24.1",
-    "apollo-server-micro": "^2.25.1",
-    "graphql": "^15.5.0",
-    "next": "10.2.3",
-    "next-auth": "^3.26.1",
-    "nexus": "^1.0.0",
+    "next": "11.0.0",
     "react": "17.0.2",
     "react-dom": "17.0.2"
   },
   "devDependencies": {
-    "@graphql-codegen/cli": "1.21.5",
-    "@graphql-codegen/typescript": "1.22.1",
-    "@graphql-codegen/typescript-operations": "1.18.0",
-    "@graphql-codegen/typescript-react-apollo": "2.2.5",
-    "@types/react": "^17.0.11",
-    "autoprefixer": "^10.2.6",
-    "postcss": "^8.3.2",
-    "prisma": "^2.24.1",
-    "tailwindcss": "^2.1.4",
-    "typescript": "^4.3.2"
+    "@types/react": "17.0.11",
+    "eslint": "7.28.0",
+    "eslint-config-next": "11.0.0",
+    "typescript": "4.3.4"
   }
 }
