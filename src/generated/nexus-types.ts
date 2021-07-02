@@ -23,9 +23,13 @@ declare global {
 }
 
 export interface NexusGenInputs {
-  RegisterInput: { // input type
-    dateOfBirth: NexusGenScalars['DateTime']; // DateTime!
+  LoginInput: { // input type
     email: string; // String!
+    password: string; // String!
+  }
+  RegisterInput: { // input type
+    email: string; // String!
+    image?: string | null; // String
     name: string; // String!
     password: string; // String!
   }
@@ -54,6 +58,7 @@ export interface NexusGenObjects {
     createdAt: NexusGenScalars['DateTime']; // DateTime!
     email: string; // String!
     id: string; // ID!
+    image?: string | null; // String
     isVerified: boolean; // Boolean!
     name: string; // String!
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
@@ -76,15 +81,17 @@ export interface NexusGenFieldTypes {
     user: NexusGenRootTypes['User']; // User!
   }
   Mutation: { // field return type
+    login: NexusGenRootTypes['AuthPayload']; // AuthPayload!
     register: NexusGenRootTypes['AuthPayload']; // AuthPayload!
   }
   Query: { // field return type
-    ok: boolean; // Boolean!
+    me: NexusGenRootTypes['User'] | null; // User
   }
   User: { // field return type
     createdAt: NexusGenScalars['DateTime']; // DateTime!
     email: string; // String!
     id: string; // ID!
+    image: string | null; // String
     isVerified: boolean; // Boolean!
     name: string; // String!
     updatedAt: NexusGenScalars['DateTime']; // DateTime!
@@ -97,15 +104,17 @@ export interface NexusGenFieldTypeNames {
     user: 'User'
   }
   Mutation: { // field return type name
+    login: 'AuthPayload'
     register: 'AuthPayload'
   }
   Query: { // field return type name
-    ok: 'Boolean'
+    me: 'User'
   }
   User: { // field return type name
     createdAt: 'DateTime'
     email: 'String'
     id: 'ID'
+    image: 'String'
     isVerified: 'Boolean'
     name: 'String'
     updatedAt: 'DateTime'
@@ -114,6 +123,9 @@ export interface NexusGenFieldTypeNames {
 
 export interface NexusGenArgTypes {
   Mutation: {
+    login: { // args
+      input: NexusGenInputs['LoginInput']; // LoginInput!
+    }
     register: { // args
       input: NexusGenInputs['RegisterInput']; // RegisterInput!
     }

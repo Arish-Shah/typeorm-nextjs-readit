@@ -18,8 +18,11 @@
       "@/common/*": ["common/*"],
       "@/generated/*": ["generated/*"],
       "@/graphql/*": ["graphql/*"],
+      "@/layouts/*": ["layouts/*"],
+      "@/modules/*": ["modules/*"],
       "@/pages/*": ["pages/*"],
-      "@/lib/*": ["common/lib/*"]
+      "@/lib/*": ["common/lib/*"],
+      "@/utils/*": ["common/utils/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],

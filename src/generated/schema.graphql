@@ -9,17 +9,23 @@ type AuthPayload {
 
 scalar DateTime
 
+input LoginInput {
+  email: String!
+  password: String!
+}
+
 type Mutation {
+  login(input: LoginInput!): AuthPayload!
   register(input: RegisterInput!): AuthPayload!
 }
 
 type Query {
-  ok: Boolean!
+  me: User
 }
 
 input RegisterInput {
-  dateOfBirth: DateTime!
   email: String!
+  image: String
   name: String!
   password: String!
 }
@@ -28,6 +34,7 @@ type User {
   createdAt: DateTime!
   email: String!
   id: ID!
+  image: String
   isVerified: Boolean!
   name: String!
   updatedAt: DateTime!
