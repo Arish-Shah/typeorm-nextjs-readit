@@ -1,9 +1,0 @@
-fragment RegularUser on User {
-  id
-  name
-  email
-  image
-  isVerified
-  createdAt
-  updatedAt
-}

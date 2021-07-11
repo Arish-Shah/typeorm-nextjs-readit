@@ -15,14 +15,8 @@
     "jsx": "preserve",
     "baseUrl": "./src",
     "paths": {
-      "@/common/*": ["common/*"],
-      "@/generated/*": ["generated/*"],
-      "@/graphql/*": ["graphql/*"],
-      "@/layouts/*": ["layouts/*"],
-      "@/modules/*": ["modules/*"],
-      "@/pages/*": ["pages/*"],
-      "@/lib/*": ["common/lib/*"],
-      "@/utils/*": ["common/utils/*"]
+      "@/client/*": ["client/*"],
+      "@/server/*": ["server/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],

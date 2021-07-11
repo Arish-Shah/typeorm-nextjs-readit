@@ -4,18 +4,9 @@
  */
 
 
-import type { Context } from "./../graphql/context"
-import type { core } from "nexus"
-declare global {
-  interface NexusGenCustomInputMethods<TypeName extends string> {
-    date<FieldName extends string>(fieldName: FieldName, opts?: core.CommonInputFieldConfig<TypeName, FieldName>): void // "DateTime";
-  }
-}
-declare global {
-  interface NexusGenCustomOutputMethods<TypeName extends string> {
-    date<FieldName extends string>(fieldName: FieldName, ...opts: core.ScalarOutSpread<TypeName, FieldName>): void // "DateTime";
-  }
-}
+import type { Context } from "./graphql/context"
+
+
 
 
 declare global {
@@ -23,16 +14,6 @@ declare global {
 }
 
 export interface NexusGenInputs {
-  LoginInput: { // input type
-    email: string; // String!
-    password: string; // String!
-  }
-  RegisterInput: { // input type
-    email: string; // String!
-    image?: string | null; // String
-    name: string; // String!
-    password: string; // String!
-  }
 }
 
 export interface NexusGenEnums {
@@ -44,25 +25,10 @@ export interface NexusGenScalars {
   Float: number
   Boolean: boolean
   ID: string
-  DateTime: any
 }
 
 export interface NexusGenObjects {
-  AuthPayload: { // root type
-    token: string; // String!
-    user: NexusGenRootTypes['User']; // User!
-  }
-  Mutation: {};
   Query: {};
-  User: { // root type
-    createdAt: NexusGenScalars['DateTime']; // DateTime!
-    email: string; // String!
-    id: string; // ID!
-    image?: string | null; // String
-    isVerified: boolean; // Boolean!
-    name: string; // String!
-    updatedAt: NexusGenScalars['DateTime']; // DateTime!
-  }
 }
 
 export interface NexusGenInterfaces {
@@ -76,60 +42,18 @@ export type NexusGenRootTypes = NexusGenObjects
 export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars
 
 export interface NexusGenFieldTypes {
-  AuthPayload: { // field return type
-    token: string; // String!
-    user: NexusGenRootTypes['User']; // User!
-  }
-  Mutation: { // field return type
-    login: NexusGenRootTypes['AuthPayload']; // AuthPayload!
-    register: NexusGenRootTypes['AuthPayload']; // AuthPayload!
-  }
   Query: { // field return type
-    me: NexusGenRootTypes['User'] | null; // User
-  }
-  User: { // field return type
-    createdAt: NexusGenScalars['DateTime']; // DateTime!
-    email: string; // String!
-    id: string; // ID!
-    image: string | null; // String
-    isVerified: boolean; // Boolean!
-    name: string; // String!
-    updatedAt: NexusGenScalars['DateTime']; // DateTime!
+    ok: boolean; // Boolean!
   }
 }
 
 export interface NexusGenFieldTypeNames {
-  AuthPayload: { // field return type name
-    token: 'String'
-    user: 'User'
-  }
-  Mutation: { // field return type name
-    login: 'AuthPayload'
-    register: 'AuthPayload'
-  }
   Query: { // field return type name
-    me: 'User'
-  }
-  User: { // field return type name
-    createdAt: 'DateTime'
-    email: 'String'
-    id: 'ID'
-    image: 'String'
-    isVerified: 'Boolean'
-    name: 'String'
-    updatedAt: 'DateTime'
+    ok: 'Boolean'
   }
 }
 
 export interface NexusGenArgTypes {
-  Mutation: {
-    login: { // args
-      input: NexusGenInputs['LoginInput']; // LoginInput!
-    }
-    register: { // args
-      input: NexusGenInputs['RegisterInput']; // RegisterInput!
-    }
-  }
 }
 
 export interface NexusGenAbstractTypeMembers {
@@ -140,7 +64,7 @@ export interface NexusGenTypeInterfaces {
 
 export type NexusGenObjectNames = keyof NexusGenObjects;
 
-export type NexusGenInputNames = keyof NexusGenInputs;
+export type NexusGenInputNames = never;
 
 export type NexusGenEnumNames = never;
 
