@@ -8,4 +8,10 @@ import { credentials } from "./credentials";
 export const handler = NextAuth({
   providers: [Providers.Email({ ...credentials })],
   adapter: PrismaAdapter(prisma),
+  callbacks: {
+    session: (session, user) => {
+      session.user.id = user.id as string;
+      return session;
+    },
+  },
 });

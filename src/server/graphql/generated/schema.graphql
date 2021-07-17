@@ -2,6 +2,17 @@
 ### Do not make changes to this file directly
 
 
+scalar DateTime
+
 type Query {
-  ok: Boolean!
+  me: User
+}
+
+type User {
+  createdAt: DateTime!
+  email: String
+  id: ID!
+  image: String
+  name: String
+  updatedAt: DateTime!
 }
