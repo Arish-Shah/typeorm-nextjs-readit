@@ -16,6 +16,7 @@
     "baseUrl": "./src",
     "paths": {
       "@/client/*": ["client/*"],
+      "@/pages/*": ["pages/*"],
       "@/server/*": ["server/*"]
     }
   },
