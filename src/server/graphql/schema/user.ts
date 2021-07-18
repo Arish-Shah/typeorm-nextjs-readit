@@ -18,7 +18,7 @@ export const Query = extendType({
   definition(t) {
     t.nullable.field("me", {
       type: "User",
-      resolve: async (_, __, { req, prisma }) => {
+      async resolve(_, __, { req, prisma }) {
         const session = await getSession({ req });
         if (session) {
           return prisma.user.findUnique({

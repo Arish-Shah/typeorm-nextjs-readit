@@ -23,9 +23,17 @@ declare global {
 }
 
 export interface NexusGenInputs {
+  SubInput: { // input type
+    banner?: string | null; // String
+    image?: string | null; // String
+    name: string; // String!
+    text?: string | null; // String
+    title?: string | null; // String
+  }
 }
 
 export interface NexusGenEnums {
+  PostType: "IMAGE" | "LINK" | "TEXT"
 }
 
 export interface NexusGenScalars {
@@ -38,7 +46,27 @@ export interface NexusGenScalars {
 }
 
 export interface NexusGenObjects {
+  Mutation: {};
+  Post: { // root type
+    body: string; // String!
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
+    id: string; // ID!
+    postType: NexusGenEnums['PostType']; // PostType!
+    slug: string; // String!
+    subName: string; // String!
+    title: string; // String!
+    updatedAt: NexusGenScalars['DateTime']; // DateTime!
+    userId: string; // String!
+  }
   Query: {};
+  Sub: { // root type
+    banner?: string | null; // String
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
+    image?: string | null; // String
+    name: string; // String!
+    text?: string | null; // String
+    title?: string | null; // String
+  }
   User: { // root type
     createdAt: NexusGenScalars['DateTime']; // DateTime!
     email?: string | null; // String
@@ -57,11 +85,33 @@ export interface NexusGenUnions {
 
 export type NexusGenRootTypes = NexusGenObjects
 
-export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars
+export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars & NexusGenEnums
 
 export interface NexusGenFieldTypes {
+  Mutation: { // field return type
+    createSub: NexusGenRootTypes['Sub']; // Sub!
+  }
+  Post: { // field return type
+    body: string; // String!
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
+    id: string; // ID!
+    postType: NexusGenEnums['PostType']; // PostType!
+    slug: string; // String!
+    subName: string; // String!
+    title: string; // String!
+    updatedAt: NexusGenScalars['DateTime']; // DateTime!
+    userId: string; // String!
+  }
   Query: { // field return type
     me: NexusGenRootTypes['User'] | null; // User
+  }
+  Sub: { // field return type
+    banner: string | null; // String
+    createdAt: NexusGenScalars['DateTime']; // DateTime!
+    image: string | null; // String
+    name: string; // String!
+    text: string | null; // String
+    title: string | null; // String
   }
   User: { // field return type
     createdAt: NexusGenScalars['DateTime']; // DateTime!
@@ -74,8 +124,30 @@ export interface NexusGenFieldTypes {
 }
 
 export interface NexusGenFieldTypeNames {
+  Mutation: { // field return type name
+    createSub: 'Sub'
+  }
+  Post: { // field return type name
+    body: 'String'
+    createdAt: 'DateTime'
+    id: 'ID'
+    postType: 'PostType'
+    slug: 'String'
+    subName: 'String'
+    title: 'String'
+    updatedAt: 'DateTime'
+    userId: 'String'
+  }
   Query: { // field return type name
     me: 'User'
+  }
+  Sub: { // field return type name
+    banner: 'String'
+    createdAt: 'DateTime'
+    image: 'String'
+    name: 'String'
+    text: 'String'
+    title: 'String'
   }
   User: { // field return type name
     createdAt: 'DateTime'
@@ -88,6 +160,11 @@ export interface NexusGenFieldTypeNames {
 }
 
 export interface NexusGenArgTypes {
+  Mutation: {
+    createSub: { // args
+      input: NexusGenInputs['SubInput']; // SubInput!
+    }
+  }
 }
 
 export interface NexusGenAbstractTypeMembers {
@@ -98,9 +175,9 @@ export interface NexusGenTypeInterfaces {
 
 export type NexusGenObjectNames = keyof NexusGenObjects;
 
-export type NexusGenInputNames = never;
+export type NexusGenInputNames = keyof NexusGenInputs;
 
-export type NexusGenEnumNames = never;
+export type NexusGenEnumNames = keyof NexusGenEnums;
 
 export type NexusGenInterfaceNames = never;
 

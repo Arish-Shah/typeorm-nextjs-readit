@@ -4,8 +4,47 @@
 
 scalar DateTime
 
+type Mutation {
+  createSub(input: SubInput!): Sub!
+}
+
+type Post {
+  body: String!
+  createdAt: DateTime!
+  id: ID!
+  postType: PostType!
+  slug: String!
+  subName: String!
+  title: String!
+  updatedAt: DateTime!
+  userId: String!
+}
+
+enum PostType {
+  IMAGE
+  LINK
+  TEXT
+}
+
 type Query {
   me: User
+}
+
+type Sub {
+  banner: String
+  createdAt: DateTime!
+  image: String
+  name: String!
+  text: String
+  title: String
+}
+
+input SubInput {
+  banner: String
+  image: String
+  name: String!
+  text: String
+  title: String
 }
 
 type User {
