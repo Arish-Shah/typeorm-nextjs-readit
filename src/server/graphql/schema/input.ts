@@ -10,3 +10,14 @@ export const SubInput = inputObjectType({
     t.nullable.string("banner");
   },
 });
+
+export const PostInput = inputObjectType({
+  name: "PostInput",
+  definition(t) {
+    t.string("title");
+    t.string("body");
+    t.field("postType", {
+      type: "PostType",
+    });
+  },
+});

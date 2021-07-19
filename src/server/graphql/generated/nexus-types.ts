@@ -23,6 +23,11 @@ declare global {
 }
 
 export interface NexusGenInputs {
+  PostInput: { // input type
+    body: string; // String!
+    postType: NexusGenEnums['PostType']; // PostType!
+    title: string; // String!
+  }
   SubInput: { // input type
     banner?: string | null; // String
     image?: string | null; // String
@@ -89,7 +94,9 @@ export type NexusGenAllTypes = NexusGenRootTypes & NexusGenScalars & NexusGenEnu
 
 export interface NexusGenFieldTypes {
   Mutation: { // field return type
+    createPost: NexusGenRootTypes['Post']; // Post!
     createSub: NexusGenRootTypes['Sub']; // Sub!
+    editPost: NexusGenRootTypes['Post']; // Post!
   }
   Post: { // field return type
     body: string; // String!
@@ -125,7 +132,9 @@ export interface NexusGenFieldTypes {
 
 export interface NexusGenFieldTypeNames {
   Mutation: { // field return type name
+    createPost: 'Post'
     createSub: 'Sub'
+    editPost: 'Post'
   }
   Post: { // field return type name
     body: 'String'
@@ -161,8 +170,16 @@ export interface NexusGenFieldTypeNames {
 
 export interface NexusGenArgTypes {
   Mutation: {
+    createPost: { // args
+      input: NexusGenInputs['PostInput']; // PostInput!
+      subName: string; // String!
+    }
     createSub: { // args
       input: NexusGenInputs['SubInput']; // SubInput!
+    }
+    editPost: { // args
+      id: string; // ID!
+      input: NexusGenInputs['PostInput']; // PostInput!
     }
   }
 }

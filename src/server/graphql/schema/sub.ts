@@ -29,7 +29,6 @@ export const Mutation = extendType({
           });
           return sub;
         } catch (e) {
-          console.log(e);
           throw new UserInputError("sub already exists");
         }
       },
